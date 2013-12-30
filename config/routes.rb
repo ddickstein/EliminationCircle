@@ -1,6 +1,6 @@
 EliminationCircle::Application.routes.draw do
-  root 'pages#about'
-  match '/about' => "pages#about"
+  root 'pages#home'
+  get '/ideas' => "pages#ideas"
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
