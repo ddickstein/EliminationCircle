@@ -1,0 +1,29 @@
+User:
+ - username
+ - email
+ - name (first,last)
+ - password (however rails does it these days)
+
+ - has_many games dependent => destroy
+
+Note: User should be able to delete games.
+
+Game:
+ - permalink
+ - is_alive:boolean (alive / dead)
+ 
+ - has_many players dependent => destroy
+
+ 
+
+Player:
+ - name
+ - details
+ - kills:integer
+ - is_alive:boolean
+ - hunter_id
+ - game_id
+
+belongs_to game
+belongs_to player (named hunter)
+has_one player (named target)
