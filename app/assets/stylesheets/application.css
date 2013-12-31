@@ -94,17 +94,18 @@ p {
     margin-left: 50px;
 }
 
+#logo a {
+    color: #f3f3f3;
+    text-decoration: none;
+}
+
 /**
  *  Button styling code adapted from Dmitry Fadeyev
  *  http://www.usabilitypost.com/2012/01/10/pressed-button-state-with-css3/
  */
-
-#header a {
+a.button, input[type="submit"] {
+    font-size: 16px;
     text-decoration: none;
-    color: #f3f3f3;
-}
-
-#header ul li a, input[type="submit"] {
     padding: 7px 10px;
     background: #aaa;
     color: #000;
@@ -125,11 +126,11 @@ p {
     user-select:none;
 }
 
-#header ul li a:hover, input[type="submit"]:hover {
+a.button:hover, input[type="submit"]:hover {
     background: #ccc;
     border: solid 1px #000;
 }
-#header ul li a:active, input[type="submit"]:active {
+a.button:active, input[type="submit"]:active {
     -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     -moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
@@ -150,10 +151,6 @@ input[type="text"] {
     margin-bottom: 5px;
     font-family: 'Gill Sans', Helvetica, Arial;
     font-size: 20px;
-}
-
-input[type="submit"] {
-    font-size: 15px;
 }
 
 #error_explanation ul {

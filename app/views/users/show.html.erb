@@ -1,3 +1,10 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_user_path(@user) %>
+<p>
+  Welcome, <%= @user.name %>.<br />
+  <% if @user.games.where(:is_alive => true).any? %>
+  Here is a list of your current games:
+  <% else %>
+  You have no games currently in progress.
+  <% end %>
+</p>

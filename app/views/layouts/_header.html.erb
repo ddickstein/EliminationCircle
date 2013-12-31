@@ -1,9 +1,13 @@
 <div id="header">
   <span id="logo"><%= link_to 'Elimination Circle', root_path %></span>
   <ul>
-    <li><%= link_to 'Game ideas', ideas_path %></li>
-    <!-- Unless signed in... -->
-    <li><%= link_to 'Sign in', signin_path %></li>
-    <!-- Else... -->
+    <li><%= link_to 'Game ideas', ideas_path, :class => 'button' %></li>
+    <% if signed_in? %>
+      <li><%= link_to 'Start new game', new_game_path, :class => 'button' %></li>
+      <li><%= link_to 'Edit profile', edit_user_path(current_user), :class => 'button' %></li>
+      <li><%= link_to 'Sign out', signout_path, :method => :delete, :class => 'button' %></li>
+    <% else %>
+      <li><%= link_to 'Sign in', signin_path, :class => 'button' %></li>
+    <% end %>
   </ul>
 </div>

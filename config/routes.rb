@@ -4,7 +4,8 @@ EliminationCircle::Application.routes.draw do
   
   get '/signup' => "users#new"
   get '/signin' => "sessions#new"
-  get '/signout' => "sessions#destroy"
+  post '/signin' => "sessions#create"
+  delete '/signout' => "sessions#destroy"
   
   resources :users, except: [:index, :new]
   resources :games, except: [:index, :edit] do
