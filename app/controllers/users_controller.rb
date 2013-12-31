@@ -1,10 +1,9 @@
 class UsersController < ApplicationController
-  before_action :show, only: [:show, :edit, :update, :destroy]
-
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :check_permissions, only: [:show, :edit, :update, :destroy]
   # GET /users/1
   # GET /users/1.json
   def show
-    # Add authentication - should only be able to see your own page.
     @user = User.find(params[:id])
   end
 
@@ -66,5 +65,11 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+    
+    def check_permissions
+      if @user != current_user
+        redirect_to '/403.html'
+      end
     end
 end
