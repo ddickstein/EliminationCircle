@@ -2,7 +2,8 @@
   <span id="logo"><%= link_to 'Elimination Circle', root_path %></span>
   <ul>
     <li><%= link_to 'Game ideas', ideas_path %></li>
-    <li><%= link_to 'New game','#' %></li>
-    <li><%= link_to 'Sign in','#' %></li>
+    <!-- Unless signed in... -->
+    <li><%= link_to 'Sign in', signin_path %></li>
+    <!-- Else... -->
   </ul>
 </div>

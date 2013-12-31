@@ -1,6 +1,17 @@
 EliminationCircle::Application.routes.draw do
   root 'pages#home'
   get '/ideas' => "pages#ideas"
+  
+  get '/signup' => "users#new"
+  get '/signin' => "sessions#new"
+  get '/signout' => "sessions#destroy"
+  
+  resources :users, except: [:index, :new]
+  resources :games, except: [:index, :edit] do
+    member do
+      get 'kill'
+    end
+  end
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

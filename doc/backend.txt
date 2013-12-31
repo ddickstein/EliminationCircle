@@ -10,7 +10,7 @@ Note: User should be able to delete games.
 
 Game:
  - permalink
- - is_alive:boolean (alive / dead)
+ - is_alive:boolean (alive 
  
  - has_many players dependent => destroy
 
