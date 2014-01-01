@@ -7,8 +7,11 @@ class User < ActiveRecord::Base
   EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
   validates :email, :presence => true, :format => { :with => EMAIL_REGEX},
                     :uniqueness => { case_sensitive: false }
-  validates :password, :presence => true, :length => { minimum: 6},
-                       :confirmation => true, :if => :setting_password?
+  validates :password, :presence => true, :length => { minimum: 6 },
+                       :confirmation => true, :on => :create
+  validates :password, :presence =>true, :length => { minimum: 6 },
+                       :confirmation => true, :on =>:update,
+                       :if => :setting_password?
 
   before_save { self.email = email.downcase }
   before_create :create_remember_token

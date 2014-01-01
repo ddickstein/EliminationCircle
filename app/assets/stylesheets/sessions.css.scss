@@ -1,3 +1,11 @@
 // Place all the styles related to the sessions controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+body.ctr_sessions.act_new #page-content a {
+    text-decoration: none;
+}
+
+body.ctr_sessions.act_new #page-content a:hover {
+    text-decoration: underline;
+}

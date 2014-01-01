@@ -1,0 +1,74 @@
+<%= form_for(@game) do |f| %>
+  <% if @game.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@game.errors.count, "error") %> prevented this game from being saved:</h2>
+
+      <ul>
+      <% @game.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    Name</br>
+    <%= f.text_field :name %>
+  </div>
+
+  <div class="field">
+    Title for details if applicable (e.g. for Killer, the details title could
+    be "Taboo word" or simply "Word").<br />
+    <%= f.text_field :details_title %>
+  </div>
+
+  <div class="field">
+    Which format does your input follow?<br />
+    <%= f.radio_button :csv_format, 'First, Last', :checked => true %>&nbsp;<span class="csv-format-option first-last-option">First name, Last name</span><br />
+    <%= f.radio_button :csv_format, 'Last, First', :checked => false %>&nbsp;<span class="csv-format-option last-first-option">Last name, First name</span>
+  </div>
+
+  <div class="field">
+    Enter all the players using the selected format.<br />
+    <%= f.text_area :csv_sheet %>
+  </div>
+
+  <div class="field">
+    If you want the details column(s) to be rand<br />
+    <%= f.check_box :randomize_details %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit 'Submit' %>
+  </div>
+<% end %>
+
+<script type="text/javascript" charset="utf-8">
+  var addTitle = function(titleValue) {
+    $("span.first-last-option").text("First name, Last name, " + titleValue)
+    $("span.last-first-option").text("Last name, First name, " + titleValue)
+    $("#game_csv_format_first_last").val("First, Last, " + titleValue)
+    $("#game_csv_format_last_first").val("Last, First, " + titleValue)
+  }
+  
+  var removeTitle = function() {
+    $("span.first-last-option").text("First name, Last name")
+    $("span.last-first-option").text("Last name, First name")
+    $("#game_csv_format_first_last").val("First, Last")
+    $("#game_csv_format_last_first").val("Last, First")
+  }
+
+  $(document).ready(function() {
+    var initialTitleValue = $("#game_details_title").val()
+    if (initialTitleValue != "")
+      addTitle(initialTitleValue)
+    
+    $("#game_details_title").on('input',function() {
+      var titleValue = $("#game_details_title").val()
+      if (titleValue == "")
+        removeTitle()
+      else
+        addTitle(titleValue)
+    })
+  })
+</script>

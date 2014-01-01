@@ -8,7 +8,7 @@ EliminationCircle::Application.routes.draw do
   delete '/signout' => "sessions#destroy"
   
   resources :users, except: [:index, :new]
-  resources :games, except: [:index, :edit] do
+  resources :games, except: [:index, :edit, :update] do
     member do
       get 'kill'
     end

@@ -1,7 +1,9 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  Welcome, <%= @user.name %>.<br />
+  Welcome, <%= @user.name %>.&nbsp;&nbsp;<%= link_to 'Edit personal information', edit_user_path(current_user), :class => 'button' %>
+</p>
+<p>
   <% if @user.games.where(:is_alive => true).any? %>
   Here is a list of your current games:
   <% else %>

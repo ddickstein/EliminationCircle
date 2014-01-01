@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<h1><%= @game.name %></h1>
+
+<table>
+  <tr>
+    <th>Status</th>
+    <th>Player</th>
+    <th>Kills</th>
+    <% unless @game.details_title.blank? %>
+      <% @game.details_title.split(",").each do |header| %>
+        <th><%= header.capitalize %></th>
+      <% end %>
+    <% end %>
+    <% if @game.user == current_user %>
+      <th>Mark as fallen</th>
+    <% end %>
+  </tr>
+  <% @game.players.each do |player| %>
+  <tr>
+    <tr><%= player.is_alive? ? 'Alive' : 'Fallen' %></tr>
+    <tr><%= player.name %></tr>
+    <tr><%= player.kills %></tr>
+    <% unless @game.details_title.blank? %>
+      <% player.details.split(",") do |detail| %>
+        <td><%= detail %></td>
+      <% end %>
+    <% end %>
+    <% if @game.user == current_user %>
+    <td>[Mark]</td><!-- need some sort of confirmation window for this -->
+    <% end %>
+  </tr>
+  <% end %>
+</table>

@@ -11,14 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131231043116) do
+ActiveRecord::Schema.define(version: 20131231204407) do
 
   create_table "games", force: true do |t|
-    t.string   "permalink",                 null: false
-    t.boolean  "is_alive",   default: true
+    t.string   "name",                           null: false
+    t.string   "permalink",                      null: false
+    t.boolean  "is_alive",        default: true
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "details_columns"
   end
 
   add_index "games", ["permalink"], name: "index_games_on_permalink", unique: true

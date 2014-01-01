@@ -1,0 +1,16 @@
+body.ctr_games.act_new .csv-format-option,
+body.ctr_games.act_create .csv-format-option {
+    vertical-align: -3px;
+    font-size: 20px;
+}
+
+body.ctr_games.act_new input[type="text"],
+body.ctr_games.act_create input[type="text"] {
+    width: 280px;
+}
+
+body.ctr_games.act_new textarea,
+body.ctr_games.act_create textarea {
+    width: 500px;
+    height:300px;
+}

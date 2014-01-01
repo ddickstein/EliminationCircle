@@ -124,6 +124,7 @@ a.button, input[type="submit"] {
     -moz-user-select:none;
     -ms-user-select:none;
     user-select:none;
+    cursor: pointer;
 }
 
 a.button:hover, input[type="submit"]:hover {
@@ -149,6 +150,12 @@ input[type="text"] {
     color: #777;
     margin-top: 5px;
     margin-bottom: 5px;
+    font-family: 'Gill Sans', Helvetica, Arial;
+    font-size: 20px;
+}
+
+textarea {
+    color: #777;
     font-family: 'Gill Sans', Helvetica, Arial;
     font-size: 20px;
 }

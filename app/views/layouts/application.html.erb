@@ -6,7 +6,7 @@
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body class="ctr_<%= controller.controller_name %> act_<%= controller.action_name %>">
   <div id="full-content">
     <%= render 'layouts/header' %>
     <div id="page-content">
