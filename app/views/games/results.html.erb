@@ -1,4 +1,26 @@
-<p id="notice"><%= notice %></p>
+<% if @game.user == current_user %>
+  <p id="notice"><%= notice %></p>
+<% end %>
 
 <h1><%= @game.name %></h1>
 
+<table>
+  <tr class="headers">
+    <th><%= sortable 'name', "Player" %></th>
+    <th><%= sortable 'died_at', "Time of Death" %></th>
+    <th><%= sortable 'kills', "Kills" %></th>
+  </tr>
+  <% @players.each_with_index do |player, index| %>
+    <tr class="<%= index % 2 == 0 ? 'even' : 'odd' %> <%= player.is_alive? ? 'winner' : nil %>">
+      <td class="player-name"><%= player.name %></td>
+      <% if player.is_alive? %>
+        <td>Winner</td>
+      <% else %>
+        <td class="time-of-death"><%= player.died_at.strftime("%-m/%-d - %l:%M%P") %></td>
+      <% end %>
+      <td><%= player.kills %></td>
+    </tr>
+  <% end %>
+</table>
+<br />
+<%= render :partial => 'delete_button', :locals => {:game => @game} %>

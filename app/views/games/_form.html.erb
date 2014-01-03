@@ -17,9 +17,13 @@
   </div>
 
   <div class="field">
-    Enter the names of any additional detail fields necessary, separated by
-    commas (e.g. for Killer, you will need a "Word" field).  Leave this box
-    empty if you do not require any additional fields.<br />
+    Some games, like Killer, require additional details for each player about
+    how the elimination must take place.  For example, in Killer, every player
+    has a taboo word that they must say in order to be eliminated.  If your
+    game uses additional details like this, please enter the names of each of
+    the details fields below (for example, for Killer, one "Word" field is
+    required).  Leave this box empty if you will not be using this feature.
+    <br />
     <%= f.text_field :details_columns %>
   </div>
 
@@ -41,7 +45,8 @@
   </div>
 
   <div class="field">
-    Choose how the detail fields will be assigned to the players<br />
+    Choose how the detail fields will be assigned to the players.  If your game
+    does not use detail fields, these options are irrelevant.<br />
     <%= f.radio_button :randomization_algorithm, 'None', :checked => true %>&nbsp;
     <span class="randomization-option">
       <strong>No randomization</strong> -

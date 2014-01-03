@@ -26,12 +26,20 @@ body.ctr_games.act_show table {
     border-radius: 4px;
 }
 
+body.ctr_games.act_show tr {
+    height: 50px;
+}
+
 body.ctr_games.act_show tr.odd {
     background-color: #aaa;
 }
 
 body.ctr_games.act_show tr.headers {
     background-color: #555;
+}
+
+body.ctr_games.act_show tr.winner {
+    background-color: #f7d038;
 }
 
 body.ctr_games.act_show td {
@@ -53,4 +61,17 @@ body.ctr_games.act_show td.status {
 
 body.ctr_games.act_show th.status {
     padding-left: 20px;
+}
+
+body.ctr_games.act_show img.kill-button {
+    float: right;
+}
+
+body.ctr_games.act_show a.sortable-link {
+    color: white;
+    text-decoration: none;
+}
+
+body.ctr_games.act_show a.sortable-link:hover {
+    text-decoration: underline;
 }

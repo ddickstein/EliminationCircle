@@ -1,4 +1,6 @@
-<p id="notice"><%= notice %></p>
+<% if @game.user == current_user %>
+  <p id="notice"><%= notice %></p>
+<% end %>
 
 <h1><%= @game.name %></h1>
 
@@ -47,7 +49,7 @@
               ) %>
           </td>
         <% else %>
-          <td></td>
+          <td class="time"><%= player.died_at.strftime("%-m/%-d - %l:%M%P") %></td>
         <% end %>
       <% end %>
     </tr>

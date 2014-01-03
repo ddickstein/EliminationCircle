@@ -1,6 +1,8 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :destroy, :kill]
   before_action :check_permissions, only: [:destroy, :kill]
+  helper_method :sort_column, :sort_direction # Sortable columns from Ryan
+                                              # Bates, Railscasts #228
   
   # GET /games/1
   # GET /games/1.json
@@ -10,6 +12,21 @@ class GamesController < ApplicationController
       @players = @game.players.living + @game.players.fallen
     else
       @title = "#{@game.name} - Results"
+      direction = sort_direction
+      column = sort_column
+      if column == 'name'
+        sort_algorithm = "last_name #{direction}, first_name #{direction}"
+      elsif column.nil?
+        sort_algorithm = "died_at desc"
+      else
+        sort_algorithm = "#{column} #{direction}"
+      end
+      @players = @game.players.order(sort_algorithm)
+      if sort_algorithm == "died_at desc"
+        @players.rotate!(-1)
+      elsif sort_algorithm == "died_at asc"
+        @players.rotate!
+      end
       render :results
     end
   end
@@ -60,6 +77,7 @@ class GamesController < ApplicationController
       
       @player.hunter = nil
       @player.is_alive = false
+      @player.died_at = Time.zone.now
       @player.save
       
       @target.hunter = @hunter
@@ -99,5 +117,14 @@ class GamesController < ApplicationController
       if @game.user != current_user
         redirect_to '/403.html'
       end
+    end
+    
+    def sort_column
+      allowed_names = Player.column_names + ['name']
+      allowed_names.include?(params[:sort]) ? params[:sort] : nil
+    end
+    
+    def sort_direction
+      params[:dir] == 'desc' ? params[:dir] : 'asc'
     end
 end

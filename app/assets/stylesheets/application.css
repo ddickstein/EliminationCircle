@@ -179,3 +179,7 @@ textarea {
 #error_explanation ul {
     margin-top: 10px;
 }
+
+.time {
+    font-family: Helvetica, Arial;
+}
