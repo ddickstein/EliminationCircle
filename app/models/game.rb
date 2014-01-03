@@ -60,7 +60,8 @@ class Game < ActiveRecord::Base
           self.errors[:base] << "Fewer than two players specified"
         else
           rows.keep_if do |row|
-            row.chomp(",").count(",") != num_commas or row =~ /,\s*,/
+            row.chomp(",").count(",") != num_commas or
+            row =~ /(?:^\s*,)|(?:,\s*,)/
           end
           if rows.size > 0
             self.errors[:base] << "Bad format on line \"#{rows[0]}\""
