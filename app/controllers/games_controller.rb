@@ -22,10 +22,12 @@ class GamesController < ApplicationController
         sort_algorithm = "#{column} #{direction}"
       end
       @players = @game.players.order(sort_algorithm)
-      if sort_algorithm == "died_at desc"
-        @players.rotate!(-1)
-      elsif sort_algorithm == "died_at asc"
-        @players.rotate!
+      if Rails.env.development?
+        if sort_algorithm == "died_at desc"
+          @players.rotate!(-1)
+        elsif sort_algorithm == "died_at asc"
+          @players.rotate!
+        end
       end
       render :results
     end
