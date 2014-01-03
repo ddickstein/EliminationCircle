@@ -1,26 +1,39 @@
 class Game < ActiveRecord::Base
-  attr_accessor :csv_format, :csv_sheet, :randomize_details
+  attr_accessor :csv_format, :csv_sheet, :randomization_algorithm
   
   has_many :players, :dependent => :destroy
   belongs_to :user
   
   validates :name, :presence => true
+  validates :user_id, :presence => true
   validate :has_valid_csv_sheet
   
   before_create :generate_permalink
-  before_create :clean_csv_format_and_details_title
+  before_create :clean_csv_format_and_details_columns
   after_create :create_players
   
   def to_param
     self.permalink
   end
   
+  def is_alive?
+    self.players.where(is_alive: true).count > 1
+  end
+  
+  def is_dead?
+    not is_alive?
+  end
+  
   private
-    def clean_csv_format_and_details_title
+    def clean_csv_format_and_details_columns
       self.csv_format.chomp!(",")
-      self.csv_format = self.csv_format.split(",").map(&:strip).join(",")
-      self.details_title.chomp!(",")
-      self.details_title = self.details_title.split(",").map(&:strip).join(",")
+      self.csv_format = self.csv_format.split(",").map(&:strip)
+      self.csv_format = self.csv_format.map(&:capitalize).join(",")
+      if self.details_columns.present?
+        self.details_columns.chomp!(",")
+        cols = self.details_columns.split(",").map(&:strip).map(&:capitalize)
+        self.details_columns = cols.join(',')
+      end
     end
   
     def generate_permalink
@@ -43,28 +56,64 @@ class Game < ActiveRecord::Base
         num_commas = self.csv_format.chomp(",").count(",")
         rows = self.csv_sheet.split("\n").map(&:strip)
         rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
-        rows.keep_if do |row|
-          row.chomp(",").count(",") != num_commas or row =~ /,\s*,/
-        end
-        if rows.size > 0
-          self.errors[:base] << "Bad format on line \"#{rows[0]}\""
+        if rows.size < 2
+          self.errors[:base] << "Fewer than two players specified"
+        else
+          rows.keep_if do |row|
+            row.chomp(",").count(",") != num_commas or row =~ /,\s*,/
+          end
+          if rows.size > 0
+            self.errors[:base] << "Bad format on line \"#{rows[0]}\""
+          end
         end
       end
     end
     
     def create_players
       headers = self.csv_format.split(",")
-      rows = self.csv_sheet.split("\n").map(&:strip).map{|row| row.split(",")}
-      rows.each do |row|
-        if headers[0] == 'First'
-          first_name = row[0]
-          last_name = row[1]
-        else
-          first_name = row[1]
-          last_name = row[0]
-        end
-        full_name = first_name.capitalize + ' ' + last_name.capitalize
-        
+      
+      rows = self.csv_sheet.split("\n").map(&:strip)
+      rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
+      rows.map!{|row| row.split(",").map(&:strip).map(&:capitalize) }
+      
+      if headers[0] == 'First'
+        first_names, last_names, *details = rows.transpose
+      else
+        last_names, first_names, *details = rows.transpose
       end
+      full_names = first_names.zip(last_names)
+      
+      if self.randomization_algorithm == 'None'
+        details = details.transpose.map{|detail| detail.join(',')}
+        elimination_circle = full_names.zip(details).map(&:flatten).shuffle
+      elsif self.randomization_algorithm == 'Set'
+        full_names.shuffle!
+        details = details.transpose.map{|detail| detail.join(',')}
+        elimination_circle = full_names.zip(details).map(&:flatten)
+      else # Individual randomization
+        full_names.shuffle!
+        details = details.map(&:shuffle).transpose.map do |detail|
+          detail.join(',')
+        end
+        elimination_circle = full_names.zip(details).map(&:flatten)
+      end
+      
+      first_player = nil
+      most_recent_player = nil
+      elimination_circle.each do |row|
+        p = Player.new
+        p.first_name = row[0]
+        p.last_name = row[1]
+        p.details = row[2]
+        p.game = self
+        p.hunter = most_recent_player
+        p.save
+        if first_player.nil?
+          first_player = p
+        end
+        most_recent_player = p
+      end
+      first_player.hunter = most_recent_player
+      first_player.save
     end
 end

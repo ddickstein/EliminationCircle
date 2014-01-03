@@ -4,9 +4,23 @@
   Welcome, <%= @user.name %>.&nbsp;&nbsp;<%= link_to 'Edit personal information', edit_user_path(current_user), :class => 'button' %>
 </p>
 <p>
-  <% if @user.games.where(:is_alive => true).any? %>
-  Here is a list of your current games:
-  <% else %>
-  You have no games currently in progress.
+  <% if @games_in_progress.any? %>
+    Games currently in progress:
+    <ul>
+      <% @games_in_progress.each do |game| %>
+        <li><%= link_to game.name, game %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if @finished_games.any? %>
+    Finished games:
+    <ul>
+      <% @finished_games.each do |game| %>
+        <li><%= link_to game.name, game %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if @games_in_progress.empty? and @finished_games.empty? %>
+    You have no games currently in progress.
   <% end %>
 </p>

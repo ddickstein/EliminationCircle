@@ -103,7 +103,8 @@ p {
  *  Button styling code adapted from Dmitry Fadeyev
  *  http://www.usabilitypost.com/2012/01/10/pressed-button-state-with-css3/
  */
-a.button, input[type="submit"] {
+a.button, input[type="submit"],
+a.jconfirm_success, a.jconfirm_fail {
     font-size: 16px;
     text-decoration: none;
     padding: 7px 10px;
@@ -127,16 +128,31 @@ a.button, input[type="submit"] {
     cursor: pointer;
 }
 
-a.button:hover, input[type="submit"]:hover {
+a.button:hover, input[type="submit"]:hover,
+a.jconfirm_success:hover, a.jconfirm_fail:hover {
     background: #ccc;
     border: solid 1px #000;
 }
-a.button:active, input[type="submit"]:active {
+a.button:active, input[type="submit"]:active,
+a.jconfirm_success:active, a.jconfirm_fail:active {
     -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     -moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
     background: #ccc;
     border: solid 1px #000;
+}
+
+a.red-button {
+    background: #851010;
+    color: #fff;
+}
+
+a.red-button:hover {
+    background: #a20f0f;
+}
+
+a.red-button:active {
+    background: #a20f0f;
 }
 
 div.field {

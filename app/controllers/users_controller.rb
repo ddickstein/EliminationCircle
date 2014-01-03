@@ -5,6 +5,8 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show
     @title = "Profile"
+    @games_in_progress = @user.games.select(&:is_alive?)
+    @finished_games = @user.games.select(&:is_dead?)
   end
 
   # GET /users/new
@@ -66,6 +68,9 @@ class UsersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])
+      if @user.nil?
+        redirect_to root_path
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

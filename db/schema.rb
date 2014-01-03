@@ -11,12 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131231204407) do
+ActiveRecord::Schema.define(version: 20140103052206) do
 
   create_table "games", force: true do |t|
-    t.string   "name",                           null: false
-    t.string   "permalink",                      null: false
-    t.boolean  "is_alive",        default: true
+    t.string   "name",            null: false
+    t.string   "permalink",       null: false
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -27,18 +26,20 @@ ActiveRecord::Schema.define(version: 20131231204407) do
   add_index "games", ["user_id"], name: "index_games_on_user_id"
 
   create_table "players", force: true do |t|
-    t.string   "name"
     t.string   "details"
-    t.integer  "kills"
+    t.integer  "kills",      default: 0
     t.boolean  "is_alive",   default: true
     t.integer  "hunter_id"
     t.integer  "game_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "last_name"
+    t.string   "first_name"
   end
 
   add_index "players", ["game_id"], name: "index_players_on_game_id"
   add_index "players", ["hunter_id"], name: "index_players_on_hunter_id"
+  add_index "players", ["last_name"], name: "index_players_on_last_name"
 
   create_table "users", force: true do |t|
     t.string   "name"

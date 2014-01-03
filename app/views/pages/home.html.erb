@@ -19,4 +19,7 @@
   handle the entire setup process.  Additionally, we provide a scoreboard that
   is automatically updated when you enter a kill, listing which players are
   still alive and how many kills each player has earned.
+  <% unless signed_in? %>
+    <%= link_to 'Sign up here', signup_path %> to get started!
+  <% end %>
 </p>

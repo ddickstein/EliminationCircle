@@ -1,5 +1,7 @@
 body.ctr_games.act_new .csv-format-option,
-body.ctr_games.act_create .csv-format-option {
+body.ctr_games.act_new .randomization-option,
+body.ctr_games.act_create .csv-format-option,
+body.ctr_games.act_create .randomization-option {
     vertical-align: -3px;
     font-size: 20px;
 }
@@ -13,4 +15,42 @@ body.ctr_games.act_new textarea,
 body.ctr_games.act_create textarea {
     width: 500px;
     height:300px;
+}
+
+body.ctr_games.act_show table {
+    border: 1px solid black;
+    border-spacing: 0px;
+    border-collapse: separate;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+body.ctr_games.act_show tr.odd {
+    background-color: #aaa;
+}
+
+body.ctr_games.act_show tr.headers {
+    background-color: #555;
+}
+
+body.ctr_games.act_show td {
+    border: 0px;
+    padding-left: 40px;
+    padding-right: 10px;
+}
+
+body.ctr_games.act_show th {
+    color: white;
+    padding: 10px;
+}
+
+body.ctr_games.act_show td.status {
+    width: 50px;
+    text-align: center;
+    padding-left: 20px;
+}
+
+body.ctr_games.act_show th.status {
+    padding-left: 20px;
 }

@@ -10,7 +10,7 @@ EliminationCircle::Application.routes.draw do
   resources :users, except: [:index, :new]
   resources :games, except: [:index, :edit, :update] do
     member do
-      get 'kill'
+      delete 'kill'
     end
   end
 

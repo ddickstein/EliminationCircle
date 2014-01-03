@@ -12,30 +12,56 @@
   <% end %>
 
   <div class="field">
-    Name</br>
+    Choose a name for this game</br>
     <%= f.text_field :name %>
   </div>
 
   <div class="field">
-    Title for details if applicable (e.g. for Killer, the details title could
-    be "Taboo word" or simply "Word").<br />
-    <%= f.text_field :details_title %>
+    Enter the names of any additional detail fields necessary, separated by
+    commas (e.g. for Killer, you will need a "Word" field).  Leave this box
+    empty if you do not require any additional fields.<br />
+    <%= f.text_field :details_columns %>
   </div>
 
   <div class="field">
-    Which format does your input follow?<br />
-    <%= f.radio_button :csv_format, 'First, Last', :checked => true %>&nbsp;<span class="csv-format-option first-last-option">First name, Last name</span><br />
-    <%= f.radio_button :csv_format, 'Last, First', :checked => false %>&nbsp;<span class="csv-format-option last-first-option">Last name, First name</span>
+    In which format will you input player names?<br />
+    <%= f.radio_button :csv_format, 'First, Last', :checked => true %>&nbsp;
+    <span class="csv-format-option first-last-option"><em>
+      First name, Last name
+    </em></span><br />
+    <%= f.radio_button :csv_format, 'Last, First', :checked => false %>&nbsp;
+    <span class="csv-format-option last-first-option"><em>
+      Last name, First name
+    </em></span>
   </div>
 
   <div class="field">
-    Enter all the players using the selected format.<br />
+    Enter all the players using the selected format<br />
     <%= f.text_area :csv_sheet %>
   </div>
 
   <div class="field">
-    If you want the details column(s) to be rand<br />
-    <%= f.check_box :randomize_details %>
+    Choose how the detail fields will be assigned to the players<br />
+    <%= f.radio_button :randomization_algorithm, 'None', :checked => true %>&nbsp;
+    <span class="randomization-option">
+      <strong>No randomization</strong> -
+        <em>Leave details assigned to their respective players.</em>
+    </span><br />
+    <%= f.radio_button :randomization_algorithm, 'Set', :checked => false %>&nbsp;
+    <span class="randomization-option">
+      <strong>Set randomization</strong> -
+        <em>If multiple detail fields exist, treat each group of details as a
+        single set, but assign them to random players (if only one detail field
+        exists this works the same way as individual randomization).  This
+        option should be chosen when the detail fields are correlated.</em>
+    </span><br />
+    <%= f.radio_button :randomization_algorithm, 'Individual', :checked => false %>&nbsp;
+    <span class="randomization-option">
+      <strong>Individual randomization</strong> -
+        <em>If multiple detail fields exist, randomly assign each of them
+        independently.  This option should be chosen when the detail fields are
+        unrelated.</em>
+    </span>
   </div>
 
   <div class="actions">
@@ -45,26 +71,26 @@
 
 <script type="text/javascript" charset="utf-8">
   var addTitle = function(titleValue) {
-    $("span.first-last-option").text("First name, Last name, " + titleValue)
-    $("span.last-first-option").text("Last name, First name, " + titleValue)
+    $("span.first-last-option em").text("First name, Last name, " + titleValue)
+    $("span.last-first-option em").text("Last name, First name, " + titleValue)
     $("#game_csv_format_first_last").val("First, Last, " + titleValue)
     $("#game_csv_format_last_first").val("Last, First, " + titleValue)
   }
   
   var removeTitle = function() {
-    $("span.first-last-option").text("First name, Last name")
-    $("span.last-first-option").text("Last name, First name")
+    $("span.first-last-option em").text("First name, Last name")
+    $("span.last-first-option em").text("Last name, First name")
     $("#game_csv_format_first_last").val("First, Last")
     $("#game_csv_format_last_first").val("Last, First")
   }
 
   $(document).ready(function() {
-    var initialTitleValue = $("#game_details_title").val()
+    var initialTitleValue = $("#game_details_columns").val()
     if (initialTitleValue != "")
       addTitle(initialTitleValue)
     
-    $("#game_details_title").on('input',function() {
-      var titleValue = $("#game_details_title").val()
+    $("#game_details_columns").on('input',function() {
+      var titleValue = $("#game_details_columns").val()
       if (titleValue == "")
         removeTitle()
       else
