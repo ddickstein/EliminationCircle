@@ -10,3 +10,4 @@
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
 EliminationCircle::Application.config.secret_key_base = 'b373131cba2db2be0111cebd3ff78d0c3dad6f4f508accf505cf7468fe5c9dd180021d1d3d4624115cedeb0f7c6224281b3b9adfb4ae1928a5e29ca744ace28b'
+# ENV['RAILS_SECRET']
