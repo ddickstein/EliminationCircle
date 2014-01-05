@@ -43,6 +43,8 @@ gem 'zeus'
 
 gem 'figaro'
 
+gem 'twilio-ruby'
+
 # Use ActiveModel has_secure_password
 gem 'bcrypt-ruby', '~> 3.1.2'
 
