@@ -29,11 +29,11 @@
 
   <div class="field">
     In which format will you input player names?<br />
-    <%= f.radio_button :csv_format, 'First, Last', :checked => true %>&nbsp;
+    <%= f.radio_button :csv_format, 'First, Last', :checked => (@game.csv_format.nil? or @game.csv_format.start_with? "First, Last") %>&nbsp;
     <span class="csv-format-option first-last-option"><em>
       First name, Last name
     </em></span><br />
-    <%= f.radio_button :csv_format, 'Last, First', :checked => false %>&nbsp;
+    <%= f.radio_button :csv_format, 'Last, First', :checked => (@game.csv_format.present? and @game.csv_format.start_with? "Last, First") %>&nbsp;
     <span class="csv-format-option last-first-option"><em>
       Last name, First name
     </em></span>
@@ -47,12 +47,12 @@
   <div class="field">
     Choose how the detail fields will be assigned to the players.  If your game
     does not use detail fields, these options are irrelevant.<br />
-    <%= f.radio_button :randomization_algorithm, 'None', :checked => true %>&nbsp;
+    <%= f.radio_button :randomization_algorithm, 'None', :checked => (@game.randomization_algorithm.nil? or @game.randomization_algorithm == 'None') %>&nbsp;
     <span class="randomization-option">
       <strong>No randomization</strong> -
         <em>Leave details assigned to their respective players.</em>
     </span><br />
-    <%= f.radio_button :randomization_algorithm, 'Set', :checked => false %>&nbsp;
+    <%= f.radio_button :randomization_algorithm, 'Set', :checked => (@game.randomization_algorithm == 'Set') %>&nbsp;
     <span class="randomization-option">
       <strong>Set randomization</strong> -
         <em>If multiple detail fields exist, treat each group of details as a
@@ -60,7 +60,7 @@
         exists this works the same way as individual randomization).  This
         option should be chosen when the detail fields are correlated.</em>
     </span><br />
-    <%= f.radio_button :randomization_algorithm, 'Individual', :checked => false %>&nbsp;
+    <%= f.radio_button :randomization_algorithm, 'Individual', :checked => (@game.randomization_algorithm == 'Individual') %>&nbsp;
     <span class="randomization-option">
       <strong>Individual randomization</strong> -
         <em>If multiple detail fields exist, randomly assign each of them

@@ -1,5 +1,5 @@
 <p>
-  Welcome, <%= @user.name %>.&nbsp;&nbsp;<%= link_to 'Edit personal information', edit_user_path(current_user), :class => 'button' %>
+  Welcome, <%= @user.name %>.&nbsp;&nbsp;<%= link_to 'Edit account info', edit_user_path(current_user), :class => 'button' %>
 </p>
 <p>
   <% if @games_in_progress.any? %>
@@ -19,6 +19,7 @@
     </ul>
   <% end %>
   <% if @games_in_progress.empty? and @finished_games.empty? %>
-    You have no games currently in progress.
+    You have no games currently in progress.<br />
+    Start a <%= link_to 'new game', new_game_path %> now!
   <% end %>
 </p>
