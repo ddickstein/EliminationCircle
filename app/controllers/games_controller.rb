@@ -46,16 +46,20 @@ class GamesController < ApplicationController
   # POST /games
   # POST /games.json
   def create
-    @game = Game.new(game_params)
-    @game.user = current_user
-    respond_to do |format|
-      if @game.save
-        format.html { redirect_to @game, notice: 'Game was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @game }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @game.errors, status: :unprocessable_entity }
+    if signed_in?
+      @game = Game.new(game_params)
+      @game.user = current_user
+      respond_to do |format|
+        if @game.save
+          format.html { redirect_to @game, notice: 'Game was successfully created.' }
+          format.json { render action: 'show', status: :created, location: @game }
+        else
+          format.html { render action: 'new' }
+          format.json { render json: @game.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      redirect_to signin_path
     end
   end
 
