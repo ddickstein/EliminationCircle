@@ -39,7 +39,7 @@ class GamesController < ApplicationController
       @game = Game.new
       @title = 'New game'
     else
-      redirect_to root_path
+      redirect_to signin_path
     end
   end
 
