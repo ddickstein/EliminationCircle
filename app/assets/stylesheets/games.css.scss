@@ -1,4 +1,4 @@
-body.ctr_games.act_new, body.ctr_games.act_create {
+body.ctr_games.act_new #page-content, body.ctr_games.act_create #page-content {
     .preregistration-option {
         vertical-align: -3px;
     }
@@ -42,7 +42,7 @@ body.ctr_games.act_new, body.ctr_games.act_create {
     }
 }
 
-body.ctr_games.act_show {
+body.ctr_games.act_show #page-content{
     table {
         border: 1px solid black;
         border-spacing: 0px;
@@ -101,6 +101,7 @@ body.ctr_games.act_show {
     a.sortable-link:hover {
         text-decoration: underline;
     }
+    
     
     ul {
         margin-top: 10px;
