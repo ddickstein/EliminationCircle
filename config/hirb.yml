@@ -13,7 +13,7 @@
         - name
         - user_id
         - started?
-        - details_columns
+        - parameters
         - permalink
 
   GameProfile:

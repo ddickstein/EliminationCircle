@@ -17,10 +17,35 @@ class GamesController < ApplicationController
   # POST /games
   # POST /games.json
   def create
-    return render :text => params
     if signed_in?
       @game = Game.new(game_params)
       @game.user = current_user
+      if @game.preregistered?
+        num_params = params[:num_params].to_i
+        parameters = ""
+        present_parameters = {}
+        1.upto(num_params) do |x|
+          param_x = params["param#{x}-name"]
+          unless param_x.blank?
+            unless parameters.blank?
+              parameters << ", "
+            end
+            parameters << param_x
+            present_parameters[x] << param_x
+          end
+        end
+      
+        parameter_lists = {}
+        present_parameters.each_pair do |index,name|
+          rows = params["param#{index}-list"].split(/[,;\n]/).map(&:strip)
+          rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
+          parameter_lists[name] = rows
+        end
+
+        @game.parameters = parameters
+        @game.parameter_lists = parameter_lists
+        @game.started = true
+      end
       respond_to do |format|
         if @game.save
           format.html { redirect_to @game, notice: 'Game was successfully created.' }
@@ -38,9 +63,10 @@ class GamesController < ApplicationController
   # GET /games/1
   # GET /games/1.json
   def show
-    if @game.is_alive?
+    if not @game.started? or @game.is_alive?
       @title = @game.name
       @players = @game.players.order(last_name: :desc, first_name: :desc)
+      @signup_url = "#{request.host_with_port}/signup?game=#{@game.permalink}"
     else
       @title = "#{@game.name} - Results"
       direction = sort_direction

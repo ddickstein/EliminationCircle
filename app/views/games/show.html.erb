@@ -1,7 +1,7 @@
 <h1><%= @game.name %></h1>
-<% unless @game.started? or @game.user == current_user %>
+<% if not @game.started? and @game.user != current_user %>
   <%= @game.user.first_name %>'s game has not yet started!  Check back soon!
-<% else %>
+<% elsif @game.started? or @game.preregistered? %>
   <table>
     <tr class="headers">
       <th class="status">Status</th>
@@ -83,4 +83,22 @@
       })
     })
   </script>
+<% else %> <!-- This user is the admin, the game has not started, and the game
+                was not preregistered.  -->
+  Email the following link to anyone you would like to invite:
+  <%= link_to @signup_url, @signup_url, :target => "_blank" %><br /><br />
+  
+  <% if @game.players.any? %>
+    <h3>People who have joined so far:</h3>
+    <ul>
+      <% @game.players.each do |player| %>
+        <li><%= player.full_name %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  
+  Once all the players have joined the game,
+  <%= link_to 'click here', '#', :id => 'complete-registration' %>
+  to complete the setup process.
+
 <% end %>

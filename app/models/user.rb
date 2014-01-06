@@ -41,6 +41,10 @@ class User < ActiveRecord::Base
   def full_name
     "#{self.first_name} #{self.last_name}"
   end
+  
+  def playing? game
+    GameProfile.find_by(user_id: self.id, game_id: game.id).present?
+  end
 
   private
     def setting_password?

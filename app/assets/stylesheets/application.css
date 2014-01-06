@@ -171,19 +171,6 @@ input[type="text"] {
     font-size: 20px;
 }
 
-input[type="number"] {
-    height: 20px;
-    color: #777;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    font-family: 'Gill Sans', Helvetica, Arial;
-    font-size: 20px;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    padding-left: 6px;
-    padding-right: 6px;
-}
-
 textarea {
     color: #777;
     font-family: 'Gill Sans', Helvetica, Arial;

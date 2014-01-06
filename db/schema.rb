@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140106013304) do
+ActiveRecord::Schema.define(version: 20140106050729) do
 
   create_table "game_profiles", force: true do |t|
     t.string   "details"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20140106013304) do
     t.integer  "user_id"
     t.string   "first_name"
     t.string   "last_name"
+    t.string   "mobile"
   end
 
   add_index "game_profiles", ["game_id"], name: "index_game_profiles_on_game_id"
@@ -32,13 +33,14 @@ ActiveRecord::Schema.define(version: 20140106013304) do
   add_index "game_profiles", ["user_id"], name: "index_game_profiles_on_user_id"
 
   create_table "games", force: true do |t|
-    t.string   "name",                       null: false
-    t.string   "permalink",                  null: false
+    t.string   "name",                          null: false
+    t.string   "permalink",                     null: false
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "parameters"
-    t.boolean  "started",    default: false
+    t.boolean  "started",       default: false
+    t.boolean  "preregistered", default: false
   end
 
   add_index "games", ["permalink"], name: "index_games_on_permalink", unique: true

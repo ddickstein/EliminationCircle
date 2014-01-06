@@ -18,64 +18,66 @@
   <div class="field">
     Do you want to let players sign up for this game or do you want to add a
     list of all the players now?<br />
-    <%= f.radio_button :preregistered, '0', :checked => (@game.preregistered.nil? or @game.preregistered == false) %>
+    <%= f.radio_button :preregistered, false, :checked => (@game.preregistered.nil? or @game.preregistered == false) %>
     <span class="preregistration-option">Let players sign up</span>
     <br />
-    <%= f.radio_button :preregistered, '1', :checked => (@game.preregistered == true) %>
+    <%= f.radio_button :preregistered, true, :checked => (@game.preregistered == true) %>
     <span class="preregistration-option">Enter player names myself</span>
   </div>
 
   <div id="preregistration-box" class="field slidedown-box">
-    If you know your players' cell phone numbers and want to enable in-game
-    updates (e.g. message all players when the game starts, let players report
-    kills via sms, etc.), enter each player's phone number after his or her
-    name, separated by a comma (e.g. John Smith, 212-555-1234)
-    <br /><br />
-    If you do not have all your players' cell phone numbers but want to enable
-    this feature, consider letting your players sign up on their own instead.
-    <br /><br />
-    Enter the player names below, one per line<br />
-    <%= f.text_area :player_sheet %>
-  </div>
-  <br />
-  <div class="field">
-    Some games have additional kill parameters that specify how a kill must
-    take place.  For example, Killer uses a "Word" parameter for each player,
-    and for players to be killed they must be tricked into saying this taboo
-    word.<br />How many additional parameters will your game use?
-    <%= number_field_tag(:num_params, value = 0, options = {:in => 0..5}) %>
-    <br />
-    Still not sure what additional parameters are?
-    <%= link_to 'Click here','#',:id => 'param-info' %> for more examples.
-  </div>
-  <div id="param-examples-box" class="slidedown-box">
-    You can create a Clue-themed Assassins game, where you have additional
-    parameters that specify the Weapon and Location of where the assassination
-    must take place (e.g. John Smith must be assassinated in the Ballroom with
-    the Candlestick).  One parameter would be the Weapon and you would provide
-    a list of possible weapons, and another parameter would be the Location and
-    you would provide a list of locations.
-  </div>
-  <br />
-  
-  <% 1.upto(5) do |x| %>
-    <div id="param<%= x %>" class="param">
-      <div class="field">
-        Choose a name for the <%= wordinalize(x) %> parameter<br />
-        <%= text_field_tag "param#{x}-name" %>
-      </div>
-      <div class="field">
-        Enter all the possible values for the <%= wordinalize(x) %> parameter.
-        <br />
-        <%= text_area_tag "param#{x}-list", nil, :class => 'parameter-list' %>
-      </div>
+    <div id="player-input-box">
+      If you know your players' cell phone numbers and want to enable in-game
+      updates (e.g. message all players when the game starts, let players report
+      kills via sms, etc.), enter each player's phone number after his or her
+      name, separated by a comma (e.g. John Smith, 212-555-1234)
+      <br /><br />
+      If you do not have all your players' cell phone numbers but want to enable
+      this feature, consider letting your players sign up on their own instead.
+      <br /><br />
+      Enter the player names below, one per line<br />
+      <%= f.text_area :player_sheet %>
     </div>
-  <% end %>
+    <br />
+    <div class="field">
+      Some games have additional kill parameters that specify how a kill must
+      take place.  For example, Killer uses a "Word" parameter for each player,
+      and for players to be killed they must be tricked into saying this taboo
+      word.<br />How many additional parameters will your game use?
+      <%= text_field_tag :num_params, '0' %>
+      <br />
+      Still not sure what additional parameters are?
+      <%= link_to 'Click here','#',:id => 'param-info' %> for more examples.
+    </div>
+    <div id="param-examples-box" class="slidedown-box">
+      You can create a Clue-themed Assassins game, where you have additional
+      parameters that specify the Weapon and Location of where the assassination
+      must take place (e.g. John Smith must be assassinated in the Ballroom with
+      the Candlestick).  One parameter would be the Weapon and you would provide
+      a list of possible weapons, and another parameter would be the Location and
+      you would provide a list of locations.
+    </div>
+    <br />
   
+    <% 1.upto(5) do |x| %>
+      <div id="param<%= x %>" class="param">
+        <div class="field">
+          Choose a name for the <%= wordinalize(x) %> parameter<br />
+          <%= text_field_tag "param#{x}-name" %>
+        </div>
+        <div class="field">
+          Enter all the possible values for the <%= wordinalize(x) %> parameter.
+          <br />
+          <%= text_area_tag "param#{x}-list", nil, :class => 'parameter-list' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
   <div class="actions">
     <%= f.submit 'Submit' %>
   </div>
 <% end %>
+
 <script type="text/javascript" charset="utf-8">
   $(document).ready(function() {
     var arr = new Array()
@@ -108,10 +110,10 @@
       refreshParamDivs(x)
     }
     
-    $('#game_preregistered_0').on('change',function() {
+    $('#game_preregistered_false').on('change',function() {
       $("#preregistration-box").slideUp("3000")
     })
-    $('#game_preregistered_1').on('change',function() {
+    $('#game_preregistered_true').on('change',function() {
       $("#preregistration-box").slideDown("3000")
     })
     $('#num_params').on('change',recalibrateNumParams)

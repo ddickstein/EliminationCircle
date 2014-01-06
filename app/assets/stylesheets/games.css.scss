@@ -1,16 +1,20 @@
 body.ctr_games.act_new, body.ctr_games.act_create {
     .preregistration-option {
         vertical-align: -3px;
-        font-size: 20px;
     }
   
     div.slidedown-box {
         display: none;
+    }
+    
+    #player-input-box {
         padding-left: 100px;
     }
   
     #param-examples-box {
         line-height: 30px;
+        padding: 30px;
+        border: 1px solid black;
     }
   
     input[type="text"] {
@@ -28,6 +32,13 @@ body.ctr_games.act_new, body.ctr_games.act_create {
     
     textarea.parameter-list {
         width: 300px;
+    }
+    
+    #num_params {
+        width: 20px;
+        padding-left: 10px;
+        padding-top: 2px;
+        padding-bottom: 2px;
     }
 }
 
@@ -89,5 +100,15 @@ body.ctr_games.act_show {
     
     a.sortable-link:hover {
         text-decoration: underline;
+    }
+    
+    ul {
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+    
+    li {
+        margin-top: 3px;
+        margin-bottom: 3px;
     }
 }

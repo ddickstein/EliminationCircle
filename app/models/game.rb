@@ -1,16 +1,20 @@
 class Game < ActiveRecord::Base
-  attr_accessor :preregistered, :player_sheet, :parameter_lists
+  attr_accessor :player_sheet, :parameter_lists
   
   has_many :game_profiles, :dependent => :destroy
   belongs_to :user
   
+  PLAYER_REGEX = /\A\w+\s+\w+(?:\s*,\s*(?:1\s*-?\s*)?(?:\([2-9]\d\d\)|
+                 [2-9]\d\d)\s*-?\s*(?:\d\d\d)\s*-?\s*(?:\d\d\d\d))?\s*,?\z/x
+
   validates :name, :presence => true
   validates :user_id, :presence => true
-  # validate  :has_valid_csv_sheet
+  validates :preregistered, :inclusion => {:in => [true,false]}
+  validates :player_sheet, :presence => true, :if => :preregistered
+  validate  :has_valid_player_sheet, :if => :preregistered
   
   before_create :generate_permalink
-  # before_create :clean_csv_format_and_details_columns
-  # after_create :create_players
+  after_create :create_players, :if => :preregistered
   
   def to_param
     self.permalink
@@ -29,56 +33,33 @@ class Game < ActiveRecord::Base
   end
   
   private
-    # def clean_csv_format_and_details_columns
-    #   self.csv_format.chomp!(",")
-    #   self.csv_format = self.csv_format.split(",").map(&:strip)
-    #   self.csv_format = self.csv_format.map(&:capitalize).join(",")
-    #   if self.details_columns.present?
-    #     self.details_columns.chomp!(",")
-    #     cols = self.details_columns.split(",").map(&:strip).map(&:capitalize)
-    #     self.details_columns = cols.join(',')
-    #   end
-    # end
-  
     def generate_permalink
       loop do
         prefix_rand_base36 = rand(0..1295).to_s(36)
         suffix_rand_base36 = rand(0..1295).to_s(36)
         rand_time = Time.zone.now.to_i.to_s(36).slice(2..-1)
         new_permalink = prefix_rand_base36 + rand_time + suffix_rand_base36
-        if Game.find_by(new_permalink).nil?
+        if Game.find_by(permalink: new_permalink).nil?
           self.permalink = new_permalink
           break
         end
       end
     end
     
-    # def has_valid_csv_sheet
-    #   if self.csv_format.empty?
-    #     self.errors[:base] << "No format specified"
-    #   elsif (not self.csv_format.start_with? "First, Last" and
-    #         not self.csv_format.start_with? "Last, First") or
-    #         self.csv_format =~ /,\s*,/
-    #     self.errors[:base] << "Invalid format specified"
-    #   elsif self.csv_sheet.empty?
-    #     self.errors[:base] << "No players specified"
-    #   else
-    #     num_commas = self.csv_format.chomp(",").count(",")
-    #     rows = self.csv_sheet.split("\n").map(&:strip)
-    #     rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
-    #     if rows.size < 2
-    #       self.errors[:base] << "Fewer than two players specified"
-    #     else
-    #       rows.keep_if do |row|
-    #         row.chomp(",").count(",") != num_commas or
-    #         row =~ /(?:^\s*,)|(?:,\s*,)/
-    #       end
-    #       if rows.size > 0
-    #         self.errors[:base] << "Bad format on line \"#{rows[0]}\""
-    #       end
-    #     end
-    #   end
-    # end
+    def has_valid_player_sheet
+      rows = self.player_sheet.split("\n").map(&:strip)
+      rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
+      if rows.size < 2
+        self.errors[:base] << "Fewer than two players specified"
+      else
+        rows.each do |row|
+          if row !~ PLAYER_REGEX
+            self.errors[:base] << "Bad format on line \"#{row}\""
+            break
+          end
+        end
+      end
+    end
     # 
     # def create_players
     #   headers = self.csv_format.split(",")
