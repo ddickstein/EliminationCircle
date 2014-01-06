@@ -1,10 +1,12 @@
 <h1>Sign up</h1>
 <p>
   After signing up you will be able to 
-  <!-- if this an independent sign up -->
-  start creating your own elimination circle games.
-  <!-- else (this is a clicked signup link) -->
-  <!-- join <player name>'s game and start creating your own games. -->
-  <!-- end -->
+  <% if @game.nil? %>
+    start creating your own elimination circle games.<br />
+    Already a member? <%= link_to 'Sign in', signin_path %> instead.
+  <% else %>
+    join <%= @game.user.full_name %>'s game.<br />
+    Already a member? <%= link_to 'Sign in', signin_path(:game => @game.permalink) %> instead.
+  <% end %>
 </p>
 <%= render 'form' %>

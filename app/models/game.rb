@@ -15,21 +15,36 @@ class Game < ActiveRecord::Base
   
   before_create :generate_permalink
   after_create :create_players, :if => :preregistered
+  after_commit :create_circle
+  after_commit :distribute_parameters
   
   def to_param
     self.permalink
   end
   
-  def is_alive?
-    self.players.where(is_alive: true).count > 1
+  def status
+    case
+    when self.pending? then 'pending'
+    when self.progressing? then 'in progress'
+    when self.finished? then 'finished'
+    else nil
+    end
+  end
+  
+  def pending?
+    not started?
+  end
+  
+  def progressing?
+    started? and self.players.where(is_alive: true).count > 1
   end
 
-  def is_dead?
-    not is_alive?
+  def finished?
+    started? and not progressing?
   end
   
   def players
-    self.game_profiles
+    self.game_profiles.order('last_name asc, first_name asc')
   end
   
   private

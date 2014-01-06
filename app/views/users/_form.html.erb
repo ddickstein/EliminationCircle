@@ -21,7 +21,7 @@
   </div>
 
   <div class="field">
-    <%= f.label :mobile, 'Cell phone number (we need this to send you in-game updates)' %><br />
+    <%= f.label :mobile, 'Cell phone number (optional - used to send you in-game updates)' %><br />
     <%= f.text_field :mobile %>
   </div>
 
@@ -34,6 +34,10 @@
     <%= f.label :password_confirmation, "Confirmation" %><br />
     <%= f.password_field :password_confirmation %>
   </div>
+  
+  <% if @game.present? %>
+    <%= hidden_field_tag :game, @game.permalink %>
+  <% end %>
 
   <div class="actions">
     <%= f.submit 'Submit' %>

@@ -12,10 +12,19 @@
     <%= f.password_field :password %>
   </div>
 
+  <% if @game.present? %>
+    <%= hidden_field_tag :game, @game.permalink %>
+  <% end %>
+
   <div class="actions">
     <%= f.submit 'Sign in' %>
   </div>
 <% end %>
 
 <br />
-Not yet registered?  <%= link_to "Sign up", signup_path %> here.
+Not yet registered?
+<% if @game.nil? %>
+  <%= link_to "Sign up", signup_path %> here.
+<% else %>
+  <%= link_to "Sign up", signup_path(:game => @game.permalink) %> here.
+<% end %>

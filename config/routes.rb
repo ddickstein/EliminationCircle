@@ -10,7 +10,10 @@ EliminationCircle::Application.routes.draw do
   resources :users, except: [:index, :new]
   resources :games, except: [:index, :edit, :update] do
     member do
+      get 'register'
+      post 'launch'
       delete 'kill'
+      delete 'remove_player/:profile_id/', :action => 'remove_player'
     end
   end
 

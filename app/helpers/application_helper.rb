@@ -22,7 +22,7 @@ module ApplicationHelper
   end
   
   def asset_url(asset)
-    "#{request.protocol}#{request.host_with_port}#{asset_path(asset)}"
+    "#{root_url}#{asset_path(asset)}"
   end
   
   def wordinalize(num)

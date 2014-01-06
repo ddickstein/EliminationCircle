@@ -15,7 +15,11 @@ class GameProfile < ActiveRecord::Base
   validates :user_id,    :presence => true
   
   def full_name
-    "#{self.first_name} #{self.last_name}"
+    if self.user.present?
+      self.user.full_name
+    else
+      "#{self.first_name} #{self.last_name}"
+    end
   end
   
   def mobile
@@ -29,6 +33,11 @@ class GameProfile < ActiveRecord::Base
   private
   
     def store_user_names_as_game_profile_names
+      if self.user.present?
+        puts "USER IS HERE"
+      end
+      
+      
       if self.first_name.nil? and self.user.present?
         self.first_name = self.user.first_name
       end
@@ -39,6 +48,10 @@ class GameProfile < ActiveRecord::Base
     end
     
     def store_user_mobile_as_game_profile_mobile
+      if self.user.present?
+        puts "USER IS HERE"
+      end
+      
       if self.mobile.nil? and self.user.present?
         self.mobile = self.user.mobile
       end

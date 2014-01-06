@@ -2,11 +2,25 @@
   Welcome, <%= @user.first_name %>.&nbsp;&nbsp;<%= link_to 'Edit account info', edit_user_path(current_user), :class => 'button' %>
 </p>
 <p>
-  <% if @games_in_progress.any? %>
+  <% if @pending_games.any? %>
+    Games that have not yet started:
+    <ul>
+      <% @pending_games.each do |game| %>
+        <li>
+          <%= link_to game.name, game %>
+          <%= if game.user == current_user then '(Leader)' end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if @progressing_games.any? %>
     Games currently in progress:
     <ul>
-      <% @games_in_progress.each do |game| %>
-        <li><%= link_to game.name, game %></li>
+      <% @progressing_games.each do |game| %>
+      <li>
+        <%= link_to game.name, game %>
+        <%= if game.user == current_user then '(Leader)' end %>
+      </li>
       <% end %>
     </ul>
   <% end %>
@@ -14,12 +28,15 @@
     Finished games:
     <ul>
       <% @finished_games.each do |game| %>
-        <li><%= link_to game.name, game %></li>
+      <li>
+        <%= link_to game.name, game %>
+        <%= if game.user == current_user then '(Leader)' end %>
+      </li>
       <% end %>
     </ul>
   <% end %>
-  <% if @games_in_progress.empty? and @finished_games.empty? %>
-    You have no games currently in progress.<br />
+  <% if @all_games.empty? %>
+    You are not currently participating in any games.<br />
     Start a <%= link_to 'new game', new_game_path %> now!
   <% end %>
 </p>

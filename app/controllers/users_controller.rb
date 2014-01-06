@@ -7,18 +7,26 @@ class UsersController < ApplicationController
     @title = "Profile"
     @all_games = Game.joins("LEFT OUTER JOIN game_profiles ON games.id = " +
                         "game_profiles.game_id").where("games.user_id = :id " +
-                        "OR game_profiles.user_id = :id", {id: @user.id})
-    @games_in_progress = @all_games.select(&:is_alive?)
-    @finished_games = @all_games.select(&:is_dead?)
+                        "OR game_profiles.user_id = :id", {id: @user.id}).uniq
+    @pending_games     = @all_games.select(&:pending?)
+    @progressing_games = @all_games.select(&:progressing?)
+    @finished_games    = @all_games.select(&:finished?)
   end
 
   # GET /users/new
   def new
     if signed_in?
-      redirect_to root_path
+      if params[:game]
+        redirect_to register_game_path(params[:game])
+      else
+        redirect_to root_path
+      end
     else
       @user = User.new
       @title = "Sign up"
+      if params[:game]
+        @game = Game.find_by(permalink: params[:game])
+      end
     end
   end
 
@@ -37,9 +45,14 @@ class UsersController < ApplicationController
       respond_to do |format|
         if @user.save
           sign_in @user
-          format.html { redirect_to @user, notice: 'User was successfully created.' }
+          if params[:game]
+            format.html { redirect_to register_game_path(params[:game]) }
+          else
+            format.html { redirect_to @user, notice: 'User was successfully created.' }
+          end
           format.json { render action: 'show', status: :created, location: @user }
         else
+          @game = Game.find_by(permalink: params[:game])
           format.html { render action: 'new' }
           format.json { render json: @user.errors, status: :unprocessable_entity }
         end

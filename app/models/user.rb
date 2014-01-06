@@ -17,8 +17,7 @@ class User < ActiveRecord::Base
   validates :name, :presence => true, :format => { :with => NAME_REGEX }
   validates :email, :presence => true, :format => { :with => EMAIL_REGEX },
                     :uniqueness => { case_sensitive: false }
-  validates :mobile, :presence => true, :format => { :with => PHONE_REGEX },
-                     :uniqueness => true
+  validates :mobile, :format => { :with => PHONE_REGEX }, :uniqueness => true
   validates :password, :presence => true, :length => { minimum: 6 },
                        :confirmation => true, :on => :create
   validates :password, :presence =>true, :length => { minimum: 6 },
@@ -43,7 +42,9 @@ class User < ActiveRecord::Base
   end
   
   def playing? game
-    GameProfile.find_by(user_id: self.id, game_id: game.id).present?
+    game.user == self or GameProfile.find_by(
+      user_id: self.id, game_id: game.id
+    ).present?
   end
 
   private
@@ -65,9 +66,11 @@ class User < ActiveRecord::Base
     end
     
     def split_name_into_first_and_last
-      partition = self.name.partition(' ')
-      self.first_name = partition[0]
-      self.last_name = partition[2]
+      if self.name.present?
+        partition = self.name.partition(' ')
+        self.first_name = partition[0]
+        self.last_name = partition[2]
+      end
     end
 
 end

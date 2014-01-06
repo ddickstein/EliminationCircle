@@ -8,7 +8,7 @@
       <th>Player</th>
       <% if @game.user == current_user %>
         <th>Target</th>
-        <% unless @game.details_columns.blank? %>
+        <% unless @game.parameters.blank? %>
           <% @game.details_columns.split(",").each do |header| %>
             <th><%= header.capitalize %></th>
           <% end %>
@@ -26,9 +26,9 @@
         <% else %>
           <td class="status"><%= image_tag 'dead.png', :size => '50' %></td>
         <% end %>
-        <td class="player-name"><%= player.name %></td>
+        <td class="player-name"><%= player.full_name %></td>
         <% if @game.user == current_user %>
-          <td><%= player.is_alive? ? player.target.name : '---' %></td>
+          <td><%= player.is_alive? ? player.target.full_name : '---' %></td>
           <% unless @game.details_columns.blank? %>
             <% player.details.split(",").each do |detail| %>
               <td><%= detail %></td>
@@ -85,20 +85,77 @@
   </script>
 <% else %> <!-- This user is the admin, the game has not started, and the game
                 was not preregistered.  -->
-  Email the following link to anyone you would like to invite:
+  Send the following link to anyone you would like to invite:
   <%= link_to @signup_url, @signup_url, :target => "_blank" %><br /><br />
   
   <% if @game.players.any? %>
     <h3>People who have joined so far:</h3>
-    <ul>
-      <% @game.players.each do |player| %>
-        <li><%= player.full_name %></li>
+    <table>
+      <% @game.players.each_with_index do |player,index| %>
+        <tr class="<%= index % 2 == 0 ? 'even' : 'odd' %>">
+          <td class="player-name"><%= player.full_name %></td>
+          <td><%= link_to 'Remove',{
+            controller: 'games',
+            action:     'remove_player',
+            id:         @game.permalink,
+            profile_id: player.id,
+          }, { :method => 'delete', :class => 'button red-button' } %>
+          </td>
+        </tr>
       <% end %>
-    </ul>
+    </table>
+    <br />
+    <script type="text/javascript" charset="utf-8">
+      $(document).ready(function() {
+        var removePlayerBlock = true // disable standard execution of remove
+                                     // button
+        $('a.red-button').on('click',function() {
+          if (removePlayerBlock) {
+            selectedButton = $(this)
+            playerName = $(this).closest("tr").find(".player-name").text()
+            $.jconfirm({
+              title: 'Are you sure you want to remove ' + playerName +
+                     ' from the game?',
+              confirm: 'Yes',
+              cancel: 'No',
+            }, function() {
+              removePlayerBlock = false // enable standard execution of remove
+                                        // button
+              selectedButton.click()
+            })
+            return false
+          }
+        })
+      })
+    </script>
+  <% else %>
+    Currently, no players have joined the game.<br /><br />
   <% end %>
+  <% if @game.players.count >= 2 %>
+    <div id="complete-registration-link-box">
+      Once all the players have joined the game,
+      <%= link_to 'click here', '#', :id => 'complete-registration-link' %>
+      to complete the setup process.
+    </div>
+    <div id="setup-completion-box" class="slidedown-box">
+      <%= form_tag launch_game_path(@game), :method => 'post', :id => 'param-form' do %>
+      <%= render :partial => 'parameter_lists' %>
+      <%= link_to "Start Game", '#', :id => 'start-button', :class => 'button green-button large-button' %>
+      <% end %>
+    </div>
   
-  Once all the players have joined the game,
-  <%= link_to 'click here', '#', :id => 'complete-registration' %>
-  to complete the setup process.
-
+    <script type="text/javascript" charset="utf-8">
+      $(document).ready(function() {
+        $("#complete-registration-link").on('click',function() {
+          $("#complete-registration-link-box").fadeOut("3000",function() {
+            $("#setup-completion-box").fadeIn("3000")
+          })
+          return false
+        })
+        $("#start-button").on('click',function() {
+          $("#param-form").submit()
+        })
+      })
+    </script>
+  <% end%>
 <% end %>

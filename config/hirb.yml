@@ -12,15 +12,17 @@
         - id
         - name
         - user_id
-        - started?
+        - status
         - parameters
         - permalink
+        - preregistered?
 
   GameProfile:
     :options:
       :fields:
         - id
         - full_name
+        - mobile
         - user_id
         - game_id
         - kills

@@ -1,0 +1,83 @@
+<div id="parameter-partial">
+  <div class="field">
+    Some games have additional kill parameters that specify how a kill must
+    take place.  For example, Killer uses a "Word" parameter for each player,
+    and for players to be killed they must be tricked into saying this taboo
+    word.<br />How many additional parameters will your game use?
+    <%= text_field_tag :num_params, '0' %>
+    <br />
+    Still not sure what additional parameters are?
+    <%= link_to 'Click here','#',:id => 'param-info' %> for more examples.
+  </div>
+  <div id="param-examples-box" class="slidedown-box">
+    You can create a Clue-themed Assassins game, where you have additional
+    parameters that specify the Weapon and Location of where the assassination
+    must take place (e.g. John Smith must be assassinated in the Ballroom with
+    the Candlestick).  One parameter would be the Weapon and you would provide
+    a list of possible weapons, and another parameter would be the Location and
+    you would provide a list of locations.
+  </div>
+  <br />
+
+  <% 1.upto(5) do |x| %>
+    <div id="param<%= x %>" class="param">
+      <div class="field">
+        Choose a name for the <%= wordinalize(x) %> parameter<br />
+        <%= text_field_tag "param#{x}-name" %>
+      </div>
+      <div class="field">
+        Enter all the possible values for the <%= wordinalize(x) %> parameter.
+        <br />
+        <%= text_area_tag "param#{x}-list", nil, :class => 'parameter-list' %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function() {
+    var arr = new Array()
+    for (var i = 0; i < 5; i++)
+    {
+      arr[i] = "#param"+(i+1)
+    }
+    
+    var refreshParamDivs = function(numParams) {
+      for (var i = 0; i < 5; i++) {
+        if (i < numParams) {
+          $(arr[i]).slideDown("3000")
+        }
+        else {
+          $(arr[i]).slideUp("3000")
+        }
+      }
+    }
+    
+    var recalibrateNumParams = function() {
+      var x = parseInt($('#num_params').val(),10)
+      if (x <= 0 || isNaN(x)) {
+        $('#num_params').val('0')
+        x = 0
+      }
+      if (x >= 5) {
+        $('#num_params').val('5')
+        x = 5
+      }
+      refreshParamDivs(x)
+    }
+    $('#num_params').on('change',recalibrateNumParams)
+    $('#num_params').on('keypress',function(e) {
+      if (e.keyCode == 13) {
+        recalibrateNumParams()
+        return false;
+      }
+    })
+    $('#param-info').on('click',function() {
+      if ($("#param-examples-box").css("display") == "none")
+        $("#param-examples-box").slideDown("3000")
+      else
+        $("#param-examples-box").slideUp("3000")
+      return false
+    })
+  })
+</script>
