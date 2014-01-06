@@ -1,3 +1,10 @@
 <h1>Edit info</h1>
 
 <%= render 'form' %>
+
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function() {
+    $("#user_name").val('<%= "#{@user.first_name} #{@user.last_name}" %>')
+    $("#user_mobile").val('<%= strip_mobile(@user.mobile) %>')
+  })
+</script>

@@ -1,83 +1,86 @@
 <h1><%= @game.name %></h1>
-
-<table>
-  <tr class="headers">
-    <th class="status">Status</th>
-    <th>Player</th>
-    <% if @game.user == current_user %>
-      <th>Target</th>
-      <% unless @game.details_columns.blank? %>
-        <% @game.details_columns.split(",").each do |header| %>
-          <th><%= header.capitalize %></th>
-        <% end %>
-      <% end %>
-    <% end %>
-    <th>Kills</th>
-    <% if @game.user == current_user %>
-      <th></th> <!-- Kill button -->
-    <% end %>
-  </tr>
-  <% @players.each_with_index do |player, index| %>
-    <tr class="<%= index % 2 == 0 ? 'even' : 'odd' %>">
-      <% if player.is_alive? %>
-        <td class="status"><%= image_tag 'alive.png', :size => '50' %></td>
-      <% else %>
-        <td class="status"><%= image_tag 'dead.png', :size => '50' %></td>
-      <% end %>
-      <td class="player-name"><%= player.name %></td>
+<% unless @game.started? or @game.user == current_user %>
+  <%= @game.user.first_name %>'s game has not yet started!  Check back soon!
+<% else %>
+  <table>
+    <tr class="headers">
+      <th class="status">Status</th>
+      <th>Player</th>
       <% if @game.user == current_user %>
-        <td><%= player.is_alive? ? player.target.name : '---' %></td>
+        <th>Target</th>
         <% unless @game.details_columns.blank? %>
-          <% player.details.split(",").each do |detail| %>
-            <td><%= detail %></td>
+          <% @game.details_columns.split(",").each do |header| %>
+            <th><%= header.capitalize %></th>
           <% end %>
         <% end %>
       <% end %>
-      <td><%= player.kills %></td>
+      <th>Kills</th>
       <% if @game.user == current_user %>
-        <% if player.is_alive? %>
-          <td>
-            <%= link_to(
-              image_tag('kill.png', :size => '50', :class => 'kill-button'),
-              kill_game_path(params: {player_id: player.id}),
-              :method => 'delete',
-              :class => 'kill-link'
-              ) %>
-          </td>
-        <% else %>
-          <td class="time"><%= player.died_at.strftime("%-m/%-d - %l:%M%P") %></td>
-        <% end %>
+        <th></th> <!-- Kill button -->
       <% end %>
     </tr>
+    <% @players.each_with_index do |player, index| %>
+      <tr class="<%= index % 2 == 0 ? 'even' : 'odd' %>">
+        <% if player.is_alive? %>
+          <td class="status"><%= image_tag 'alive.png', :size => '50' %></td>
+        <% else %>
+          <td class="status"><%= image_tag 'dead.png', :size => '50' %></td>
+        <% end %>
+        <td class="player-name"><%= player.name %></td>
+        <% if @game.user == current_user %>
+          <td><%= player.is_alive? ? player.target.name : '---' %></td>
+          <% unless @game.details_columns.blank? %>
+            <% player.details.split(",").each do |detail| %>
+              <td><%= detail %></td>
+            <% end %>
+          <% end %>
+        <% end %>
+        <td><%= player.kills %></td>
+        <% if @game.user == current_user %>
+          <% if player.is_alive? %>
+            <td>
+              <%= link_to(
+                image_tag('kill.png', :size => '50', :class => 'kill-button'),
+                kill_game_path(params: {player_id: player.id}),
+                :method => 'delete',
+                :class => 'kill-link'
+                ) %>
+            </td>
+          <% else %>
+            <td class="time"><%= player.died_at.strftime("%-m/%-d - %l:%M%P") %></td>
+          <% end %>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+  <br />
+  <% if @game.user == current_user %>
+    <p>
+      Copy this page's URL and send it to the players of the game so they can
+      check back here and see the current scoreboard.
+    </p>
   <% end %>
-</table>
-<br />
-<% if @game.user == current_user %>
-  <p>
-    Copy this page's URL and send it to the players of the game so they can
-    check back here and see the current scoreboard.
-  </p>
-<% end %>
-<%= render :partial => 'delete_button', :locals => {:game => @game} %>
+  <%= render :partial => 'delete_button', :locals => {:game => @game} %>
 
-<script type="text/javascript" charset="utf-8">
-  $(document).ready(function() {
-    $('img.kill-button').rotate(30)
-    var killBlock = true // disable standard execution of kill button
-    $('a.kill-link').on('click',function() {
-      if (killBlock) {
-        deathButton = $(this)
-        playerName = $(this).parent().parent().find('td.player-name').text()
-        $.jconfirm({
-          title: 'Are you sure you want to kill ' + playerName + '?',
-          confirm: 'Yes',
-          cancel: 'No',
-        }, function() {
-          killBlock = false // enable standard execution of kill button
-          deathButton[0].click()
-        })
-        return false
-      }
+  <script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+      $('img.kill-button').rotate(30)
+      var killBlock = true // disable standard execution of kill button
+      $('a.kill-link').on('click',function() {
+        if (killBlock) {
+          deathButton = $(this)
+          playerName = $(this).parent().parent().find('td.player-name').text()
+          $.jconfirm({
+            title: 'Are you sure you want to kill ' + playerName + '?',
+            confirm: 'Yes',
+            cancel: 'No',
+          }, function() {
+            killBlock = false // enable standard execution of kill button
+            deathButton[0].click()
+          })
+          return false
+        }
+      })
     })
-  })
-</script>
+  </script>
+<% end %>

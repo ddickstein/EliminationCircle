@@ -11,21 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140103155901) do
+ActiveRecord::Schema.define(version: 20140106013304) do
 
-  create_table "games", force: true do |t|
-    t.string   "name",            null: false
-    t.string   "permalink",       null: false
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "details_columns"
-  end
-
-  add_index "games", ["permalink"], name: "index_games_on_permalink", unique: true
-  add_index "games", ["user_id"], name: "index_games_on_user_id"
-
-  create_table "players", force: true do |t|
+  create_table "game_profiles", force: true do |t|
     t.string   "details"
     t.integer  "kills",      default: 0
     t.boolean  "is_alive",   default: true
@@ -33,22 +21,38 @@ ActiveRecord::Schema.define(version: 20140103155901) do
     t.integer  "game_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "last_name"
-    t.string   "first_name"
     t.datetime "died_at"
+    t.integer  "user_id"
+    t.string   "first_name"
+    t.string   "last_name"
   end
 
-  add_index "players", ["game_id"], name: "index_players_on_game_id"
-  add_index "players", ["hunter_id"], name: "index_players_on_hunter_id"
-  add_index "players", ["last_name"], name: "index_players_on_last_name"
+  add_index "game_profiles", ["game_id"], name: "index_game_profiles_on_game_id"
+  add_index "game_profiles", ["hunter_id"], name: "index_game_profiles_on_hunter_id"
+  add_index "game_profiles", ["user_id"], name: "index_game_profiles_on_user_id"
+
+  create_table "games", force: true do |t|
+    t.string   "name",                       null: false
+    t.string   "permalink",                  null: false
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "parameters"
+    t.boolean  "started",    default: false
+  end
+
+  add_index "games", ["permalink"], name: "index_games_on_permalink", unique: true
+  add_index "games", ["user_id"], name: "index_games_on_user_id"
 
   create_table "users", force: true do |t|
-    t.string   "name"
     t.string   "email",           null: false
     t.string   "password_digest"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
+    t.string   "mobile"
+    t.string   "first_name"
+    t.string   "last_name"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

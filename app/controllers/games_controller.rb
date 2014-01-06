@@ -3,13 +3,44 @@ class GamesController < ApplicationController
   before_action :check_permissions, only: [:destroy, :kill]
   helper_method :sort_column, :sort_direction # Sortable columns from Ryan
                                               # Bates, Railscasts #228
-  
+
+  # GET /games/new
+  def new
+    if signed_in?
+      @game = Game.new
+      @title = 'New game'
+    else
+      redirect_to signin_path
+    end
+  end
+
+  # POST /games
+  # POST /games.json
+  def create
+    return render :text => params
+    if signed_in?
+      @game = Game.new(game_params)
+      @game.user = current_user
+      respond_to do |format|
+        if @game.save
+          format.html { redirect_to @game, notice: 'Game was successfully created.' }
+          format.json { render action: 'show', status: :created, location: @game }
+        else
+          format.html { render action: 'new' }
+          format.json { render json: @game.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      redirect_to signin_path
+    end
+  end
+
   # GET /games/1
   # GET /games/1.json
   def show
     if @game.is_alive?
       @title = @game.name
-      @players = @game.players.living + @game.players.fallen
+      @players = @game.players.order(last_name: :desc, first_name: :desc)
     else
       @title = "#{@game.name} - Results"
       direction = sort_direction
@@ -33,36 +64,6 @@ class GamesController < ApplicationController
     end
   end
 
-  # GET /games/new
-  def new
-    if signed_in?
-      @game = Game.new
-      @title = 'New game'
-    else
-      redirect_to signin_path
-    end
-  end
-
-  # POST /games
-  # POST /games.json
-  def create
-    if signed_in?
-      @game = Game.new(game_params)
-      @game.user = current_user
-      respond_to do |format|
-        if @game.save
-          format.html { redirect_to @game, notice: 'Game was successfully created.' }
-          format.json { render action: 'show', status: :created, location: @game }
-        else
-          format.html { render action: 'new' }
-          format.json { render json: @game.errors, status: :unprocessable_entity }
-        end
-      end
-    else
-      redirect_to signin_path
-    end
-  end
-
   # DELETE /games/1
   # DELETE /games/1.json
   def destroy
@@ -77,7 +78,7 @@ class GamesController < ApplicationController
   # POST /games/1/kill.json
   def kill
     if params.include? :player_id
-      @player = Player.find(params[:player_id])
+      @player = GameProfile.find(params[:player_id])
       @hunter = @player.hunter
       @target = @player.target
       
@@ -115,8 +116,7 @@ class GamesController < ApplicationController
     
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:name, :details_columns, :csv_format,
-                                   :csv_sheet, :randomization_algorithm)
+      params.require(:game).permit(:name, :preregistered, :player_sheet)
     end
     
     def check_permissions
@@ -126,7 +126,7 @@ class GamesController < ApplicationController
     end
     
     def sort_column
-      allowed_names = Player.column_names + ['name']
+      allowed_names = GameProfile.column_names + ['name']
       allowed_names.include?(params[:sort]) ? params[:sort] : nil
     end
     

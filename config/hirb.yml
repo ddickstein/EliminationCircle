@@ -1,0 +1,30 @@
+:output:
+  User:
+    :options:
+      :fields:
+        - id
+        - full_name
+        - email
+        - mobile
+  Game:
+    :options:
+      :fields:
+        - id
+        - name
+        - user_id
+        - started?
+        - details_columns
+        - permalink
+
+  GameProfile:
+    :options:
+      :fields:
+        - id
+        - full_name
+        - user_id
+        - game_id
+        - kills
+        - details
+        - is_alive?
+        - died_at
+        - hunter_id

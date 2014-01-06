@@ -2,7 +2,6 @@
   <% if @game.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@game.errors.count, "error") %> prevented this game from being saved:</h2>
-
       <ul>
       <% @game.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -17,89 +16,117 @@
   </div>
 
   <div class="field">
-    Some games require additional details for each player about how player
-    elimination must take place.  For example, in Killer, every player has a
-    taboo word that they must say in order to be eliminated.  If your game uses
-    additional details like this, please enter the names of each of the details
-    fields below (for Killer, one "Word" field would be required). Leave this
-    box empty if you will not be using this feature.
+    Do you want to let players sign up for this game or do you want to add a
+    list of all the players now?<br />
+    <%= f.radio_button :preregistered, '0', :checked => (@game.preregistered.nil? or @game.preregistered == false) %>
+    <span class="preregistration-option">Let players sign up</span>
     <br />
-    <%= f.text_field :details_columns %>
+    <%= f.radio_button :preregistered, '1', :checked => (@game.preregistered == true) %>
+    <span class="preregistration-option">Enter player names myself</span>
   </div>
 
+  <div id="preregistration-box" class="field slidedown-box">
+    If you know your players' cell phone numbers and want to enable in-game
+    updates (e.g. message all players when the game starts, let players report
+    kills via sms, etc.), enter each player's phone number after his or her
+    name, separated by a comma (e.g. John Smith, 212-555-1234)
+    <br /><br />
+    If you do not have all your players' cell phone numbers but want to enable
+    this feature, consider letting your players sign up on their own instead.
+    <br /><br />
+    Enter the player names below, one per line<br />
+    <%= f.text_area :player_sheet %>
+  </div>
+  <br />
   <div class="field">
-    In which format will you input player names?<br />
-    <%= f.radio_button :csv_format, 'First, Last', :checked => (@game.csv_format.nil? or @game.csv_format.start_with? "First, Last") %>&nbsp;
-    <span class="csv-format-option first-last-option"><em>
-      First name, Last name
-    </em></span><br />
-    <%= f.radio_button :csv_format, 'Last, First', :checked => (@game.csv_format.present? and @game.csv_format.start_with? "Last, First") %>&nbsp;
-    <span class="csv-format-option last-first-option"><em>
-      Last name, First name
-    </em></span>
+    Some games have additional kill parameters that specify how a kill must
+    take place.  For example, Killer uses a "Word" parameter for each player,
+    and for players to be killed they must be tricked into saying this taboo
+    word.<br />How many additional parameters will your game use?
+    <%= number_field_tag(:num_params, value = 0, options = {:in => 0..5}) %>
+    <br />
+    Still not sure what additional parameters are?
+    <%= link_to 'Click here','#',:id => 'param-info' %> for more examples.
   </div>
-
-  <div class="field">
-    Enter all the players using the selected format<br />
-    <%= f.text_area :csv_sheet %>
+  <div id="param-examples-box" class="slidedown-box">
+    You can create a Clue-themed Assassins game, where you have additional
+    parameters that specify the Weapon and Location of where the assassination
+    must take place (e.g. John Smith must be assassinated in the Ballroom with
+    the Candlestick).  One parameter would be the Weapon and you would provide
+    a list of possible weapons, and another parameter would be the Location and
+    you would provide a list of locations.
   </div>
-
-  <div class="field">
-    Choose how the detail fields will be assigned to the players.  If your game
-    does not use detail fields, these options are irrelevant.<br />
-    <%= f.radio_button :randomization_algorithm, 'None', :checked => (@game.randomization_algorithm.nil? or @game.randomization_algorithm == 'None') %>&nbsp;
-    <span class="randomization-option">
-      <strong>No randomization</strong> -
-        <em>Leave details assigned to their respective players.</em>
-    </span><br />
-    <%= f.radio_button :randomization_algorithm, 'Set', :checked => (@game.randomization_algorithm == 'Set') %>&nbsp;
-    <span class="randomization-option">
-      <strong>Set randomization</strong> -
-        <em>If multiple detail fields exist, treat each group of details as a
-        single set, but assign them to random players (if only one detail field
-        exists this works the same way as individual randomization).  This
-        option should be chosen when the detail fields are correlated.</em>
-    </span><br />
-    <%= f.radio_button :randomization_algorithm, 'Individual', :checked => (@game.randomization_algorithm == 'Individual') %>&nbsp;
-    <span class="randomization-option">
-      <strong>Individual randomization</strong> -
-        <em>If multiple detail fields exist, randomly assign each of them
-        independently.  This option should be chosen when the detail fields are
-        unrelated.</em>
-    </span>
-  </div>
-
+  <br />
+  
+  <% 1.upto(5) do |x| %>
+    <div id="param<%= x %>" class="param">
+      <div class="field">
+        Choose a name for the <%= wordinalize(x) %> parameter<br />
+        <%= text_field_tag "param#{x}-name" %>
+      </div>
+      <div class="field">
+        Enter all the possible values for the <%= wordinalize(x) %> parameter.
+        <br />
+        <%= text_area_tag "param#{x}-list", nil, :class => 'parameter-list' %>
+      </div>
+    </div>
+  <% end %>
+  
   <div class="actions">
     <%= f.submit 'Submit' %>
   </div>
 <% end %>
-
 <script type="text/javascript" charset="utf-8">
-  var addTitle = function(titleValue) {
-    $("span.first-last-option em").text("First name, Last name, " + titleValue)
-    $("span.last-first-option em").text("Last name, First name, " + titleValue)
-    $("#game_csv_format_first_last").val("First, Last, " + titleValue)
-    $("#game_csv_format_last_first").val("Last, First, " + titleValue)
-  }
-  
-  var removeTitle = function() {
-    $("span.first-last-option em").text("First name, Last name")
-    $("span.last-first-option em").text("Last name, First name")
-    $("#game_csv_format_first_last").val("First, Last")
-    $("#game_csv_format_last_first").val("Last, First")
-  }
-
   $(document).ready(function() {
-    var initialTitleValue = $("#game_details_columns").val()
-    if (initialTitleValue != "")
-      addTitle(initialTitleValue)
+    var arr = new Array()
+    for (var i = 0; i < 5; i++)
+    {
+      arr[i] = "#param"+(i+1)
+    }
     
-    $("#game_details_columns").on('input',function() {
-      var titleValue = $("#game_details_columns").val()
-      if (titleValue == "")
-        removeTitle()
+    var refreshParamDivs = function(numParams) {
+      for (var i = 0; i < 5; i++) {
+        if (i < numParams) {
+          $(arr[i]).slideDown("3000")
+        }
+        else {
+          $(arr[i]).slideUp("3000")
+        }
+      }
+    }
+    
+    var recalibrateNumParams = function() {
+      var x = parseInt($('#num_params').val(),10)
+      if (x <= 0 || isNaN(x)) {
+        $('#num_params').val('0')
+        x = 0
+      }
+      if (x >= 5) {
+        $('#num_params').val('5')
+        x = 5
+      }
+      refreshParamDivs(x)
+    }
+    
+    $('#game_preregistered_0').on('change',function() {
+      $("#preregistration-box").slideUp("3000")
+    })
+    $('#game_preregistered_1').on('change',function() {
+      $("#preregistration-box").slideDown("3000")
+    })
+    $('#num_params').on('change',recalibrateNumParams)
+    $('#num_params').on('keypress',function(e) {
+      if (e.keyCode == 13) {
+        recalibrateNumParams()
+        return false;
+      }
+    })
+    $('#param-info').on('click',function() {
+      if ($("#param-examples-box").css("display") == "none")
+        $("#param-examples-box").slideDown("3000")
       else
-        addTitle(titleValue)
+        $("#param-examples-box").slideUp("3000")
+      return false
     })
   })
 </script>

@@ -5,8 +5,11 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show
     @title = "Profile"
-    @games_in_progress = @user.games.select(&:is_alive?)
-    @finished_games = @user.games.select(&:is_dead?)
+    @all_games = Game.joins("LEFT OUTER JOIN game_profiles ON games.id = " +
+                        "game_profiles.game_id").where("games.user_id = :id " +
+                        "OR game_profiles.user_id = :id", {id: @user.id})
+    @games_in_progress = @all_games.select(&:is_alive?)
+    @finished_games = @all_games.select(&:is_dead?)
   end
 
   # GET /users/new
@@ -79,7 +82,8 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :mobile, :password,
+                                   :password_confirmation)
     end
     
     def check_permissions
