@@ -41,7 +41,7 @@
             <td>
               <%= link_to(
                 image_tag('kill.png', :size => '50', :class => 'kill-button'),
-                kill_game_path(params: {player_id: player.id}),
+                kill_game_path(params: {player_id: player.target.id}),
                 :method => 'delete',
                 :class => 'kill-link'
                 ) %>

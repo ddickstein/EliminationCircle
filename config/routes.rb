@@ -7,62 +7,14 @@ EliminationCircle::Application.routes.draw do
   post '/signin' => "sessions#create"
   delete '/signout' => "sessions#destroy"
   
-  resources :users, except: [:index, :new]
+  resources :users, except: [:index, :new, :destroy]
   resources :games, except: [:index, :edit, :update] do
     member do
-      get 'register'
-      post 'launch'
-      delete 'kill'
-      delete 'remove_player/:profile_id/', :action => 'remove_player'
+      get 'register' # Register a player for this game 
+      post 'launch'  # Launch a game that was not pre-registered
+      delete 'kill'  # Eliminate a player from this game
+      delete 'remove_player/:profile_id/', # Remove a player from this game
+             :action => 'remove_player'    # (assuming game has not yet begun)
     end
   end
-
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
-
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
-
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
-
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
 end

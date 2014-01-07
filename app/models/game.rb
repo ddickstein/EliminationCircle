@@ -34,15 +34,15 @@ class Game < ActiveRecord::Base
   end
   
   def pending?
-    not started?
+    started? and not initialized?
   end
   
   def progressing?
-    started? and self.players.where(is_alive: true).count > 1
+    initialized? and self.players.where(is_alive: true).count > 1
   end
 
   def finished?
-    started? and not progressing?
+    initialized? and not progressing?
   end
   
   def players
@@ -94,9 +94,7 @@ class Game < ActiveRecord::Base
     end
     
     def initialize_game
-      puts "Initialize?"
-      if self.players.count >= 2 and started? and not initialized?
-        puts "Affirmative!"
+      if self.players.count >= 2 and pending?
         create_circle
         distribute_parameters
         self.initialized = true

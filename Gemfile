@@ -7,6 +7,11 @@ gem 'rails', '4.0.2'
 group :test, :development do
   gem 'sqlite3'
   gem 'hirb'
+  gem 'rspec-rails', '~> 3.0.0.beta'
+end
+
+group :test do
+  gem 'simplecov', :require => false
 end
 
 group :production do

@@ -125,7 +125,7 @@ class GamesController < ApplicationController
       when :already_playing then format.html { redirect_to @game, notice: "You are already playing #{@game.user.full_name}'s game" }
       when :already_started then format.html { redirect_to @game, notice: "#{@game.user.full_name}'s game has already started"}
       when :success then format.html { redirect_to @game, notice: "Successfully added you to #{@game.user.full_name}'s game" }
-      when :failure then format.html { redirect_to root_path, notice: "Failed to add you to #{@game.user.full_name}'s game" }
+      when :failure then format.html { redirect_to root_path, error: "Failed to add you to #{@game.user.full_name}'s game" }
       else format.html { redirect_to root_path }
       end
     end

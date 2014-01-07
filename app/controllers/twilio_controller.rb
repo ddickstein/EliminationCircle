@@ -1,3 +1,6 @@
+#
+#  This controller handles all SMS interaction through Twilio
+#
 class TwilioController < ApplicationController
   
   def receive_kill_notification

@@ -17,5 +17,8 @@
 
 .DS_Store
 
+/bin
+/coverage
+
 # Ignore application configuration
 /config/application.yml
