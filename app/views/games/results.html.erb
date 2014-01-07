@@ -8,11 +8,11 @@
   </tr>
   <% @players.each_with_index do |player, index| %>
     <tr class="<%= index % 2 == 0 ? 'even' : 'odd' %> <%= player.is_alive? ? 'winner' : nil %>">
-      <td class="player-name"><%= player.name %></td>
+      <td class="player-name"><%= player.full_name %></td>
       <% if player.is_alive? %>
         <td>Winner</td>
       <% else %>
-        <td class="time-of-death"><%= player.died_at.strftime("%-m/%-d - %l:%M%P") %></td>
+        <td class="time-of-death"><%= player.died_at.strftime("%b %-d, %l:%M%P") %></td>
       <% end %>
       <td><%= player.kills %></td>
     </tr>

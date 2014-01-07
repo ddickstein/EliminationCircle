@@ -142,15 +142,6 @@ a.jconfirm_success:active, a.jconfirm_fail:active {
     border: solid 1px #000;
 }
 
-.jconfirm_inner {
-    height: 120px;
-    margin-top: -60px;
-}
-
-h4.jconfirm_title {
-    margin-top: 15px;
-}
-
 a.large-button {
     padding-top: 10px;
     padding-bottom: 10px;

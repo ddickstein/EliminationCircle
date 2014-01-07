@@ -28,7 +28,7 @@ module GamesHelper
         unless parameter_names.blank?
           parameter_names << ", "
         end
-        parameter_names << name
+        parameter_names << name.capitalize
         parameter_name_hash[x] = name
       end
     end
@@ -37,7 +37,7 @@ module GamesHelper
     parameter_name_hash.each_pair do |index,name|
       rows = args["param#{index}-list"].split(/[,;\n]/).map(&:strip)
       rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
-      parameter_lists[name] = rows
+      parameter_lists[name] = rows.map(&:capitalize)
     end
     
     return parameter_names, parameter_lists

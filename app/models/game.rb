@@ -1,22 +1,24 @@
 class Game < ActiveRecord::Base
+  include Shuffler
+  
   attr_accessor :player_sheet, :parameter_lists
   
   has_many :game_profiles, :dependent => :destroy
   belongs_to :user
   
-  PLAYER_REGEX = /\A\w+\s+\w+(?:\s*,\s*(?:1\s*-?\s*)?(?:\([2-9]\d\d\)|
+  PLAYER_REGEX = /\A[a-zA-Z]+\s+[a-zA-Z]+(?:\s+[a-zA-Z]+)*?
+                 (?:\s*,\s*(?:1\s*-?\s*)?(?:\([2-9]\d\d\)|
                  [2-9]\d\d)\s*-?\s*(?:\d\d\d)\s*-?\s*(?:\d\d\d\d))?\s*,?\z/x
 
   validates :name, :presence => true
   validates :user_id, :presence => true
   validates :preregistered, :inclusion => {:in => [true,false]}
-  validates :player_sheet, :presence => true, :if => :preregistered
-  validate  :has_valid_player_sheet, :if => :preregistered
+  validates :player_sheet, :presence => true, :if => :preregistered?
+  validate  :has_valid_player_sheet, :if => :preregistered?
   
   before_create :generate_permalink
-  after_create :create_players, :if => :preregistered
-  after_commit :create_circle
-  after_commit :distribute_parameters
+  after_create :create_players, :if => :preregistered?
+  after_commit :initialize_game, :unless => :initialized?
   
   def to_param
     self.permalink
@@ -75,52 +77,60 @@ class Game < ActiveRecord::Base
         end
       end
     end
-    # 
-    # def create_players
-    #   headers = self.csv_format.split(",")
-    #   
-    #   rows = self.csv_sheet.split("\n").map(&:strip)
-    #   rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
-    #   rows.map!{|row| row.split(",").map(&:strip).map(&:capitalize) }
-    #   
-    #   if headers[0] == 'First'
-    #     first_names, last_names, *details = rows.transpose
-    #   else
-    #     last_names, first_names, *details = rows.transpose
-    #   end
-    #   full_names = first_names.zip(last_names)
-    #   
-    #   if self.randomization_algorithm == 'None'
-    #     details = details.transpose.map{|detail| detail.join(',')}
-    #     elimination_circle = full_names.zip(details).map(&:flatten).shuffle
-    #   elsif self.randomization_algorithm == 'Set'
-    #     full_names.shuffle!
-    #     details = details.transpose.map{|detail| detail.join(',')}
-    #     elimination_circle = full_names.zip(details).map(&:flatten)
-    #   else # Individual randomization
-    #     full_names.shuffle!
-    #     details = details.map(&:shuffle).transpose.map do |detail|
-    #       detail.join(',')
-    #     end
-    #     elimination_circle = full_names.zip(details).map(&:flatten)
-    #   end
-    #   
-    #   first_player = nil
-    #   most_recent_player = nil
-    #   elimination_circle.each do |row|
-    #     p = GameProfile.new
-    #     p.first_name = row[0]
-    #     p.last_name = row[1]
-    #     p.details = row[2]
-    #     p.game = self
-    #     p.hunter = most_recent_player
-    #     p.save
-    #     if first_player.nil?
-    #       first_player = p
-    #     end
-    #     most_recent_player = p
-    #   end
-    #   first_player.hunter = most_recent_player
-    #   first_player.save
-    # end
+    
+    def create_players
+      rows = self.player_sheet.split("\n").map(&:strip)
+      rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
+      rows.each do |row|
+        name,phone = row.split(',').map(&:strip)
+        player = GameProfile.new
+        player.game = self
+        name_arr = name.split(/\s+/)
+        player.first_name = name_arr[0]
+        player.last_name = name_arr[1..-1].join(" ")
+        player.mobile = phone unless phone.nil?
+        player.save!
+      end
+    end
+    
+    def initialize_game
+      puts "Initialize?"
+      if self.players.count >= 2 and started? and not initialized?
+        puts "Affirmative!"
+        create_circle
+        distribute_parameters
+        self.initialized = true
+        self.save
+      end
+    end
+    
+    def create_circle
+      first_player = nil
+      most_recent_player = nil
+      self.players.shuffle.each do |player|
+        if first_player.nil?
+          first_player = player
+          most_recent_player = player
+        else
+          player.hunter = most_recent_player
+          player.save!
+          most_recent_player = player
+        end
+      end
+      first_player.hunter = most_recent_player
+      first_player.save!
+    end
+    
+    def distribute_parameters
+      if self.parameter_lists.present?
+        num_players = self.players.count
+        detail_sets = self.parameter_lists.map { |name,list|
+          Shuffler.shuffle_to_length(list,num_players)
+        }.transpose.map{|set| set.join(", ")}
+        self.players.each_with_index do |player,index|
+          player.details = detail_sets[index]
+          player.save!
+        end
+      end
+    end
 end

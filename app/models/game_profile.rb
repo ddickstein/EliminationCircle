@@ -1,4 +1,7 @@
 class GameProfile < ActiveRecord::Base
+  include MobileConcern
+  include NameConcern
+  
   belongs_to :game
   belongs_to :user
   belongs_to :hunter, :class_name => 'GameProfile', :foreign_key => 'hunter_id'
@@ -6,24 +9,19 @@ class GameProfile < ActiveRecord::Base
   
   before_save :store_user_names_as_game_profile_names
   before_save :store_user_mobile_as_game_profile_mobile
-  
-  PHONE_REGEX = /\A(?:1\s*-?\s*)?(?<area>\([2-9]\d\d\)|[2-9]\d\d)\s*-?\s*
-                (?<num1>\d\d\d)\s*-?\s*(?<num2>\d\d\d\d)\z/x
 
-  validates :mobile,     :format => { :with => PHONE_REGEX }
-  validates :game_id,    :presence => true
-  validates :user_id,    :presence => true
+  validates :game_id, :presence => true
   
-  def full_name
-    if self.user.present?
-      self.user.full_name
-    else
-      "#{self.first_name} #{self.last_name}"
-    end
+  def first_name
+    self.user.present? ? self.user.first_name : self.read_attribute(:first_name)
+  end
+  
+  def last_name
+    self.user.present? ? self.user.last_name : self.read_attribute(:last_name)
   end
   
   def mobile
-    self.user.present? ? self.user.mobile : nil
+    self.user.present? ? self.user.mobile : self.read_attribute(:mobile)
   end
   
   def email
@@ -33,11 +31,6 @@ class GameProfile < ActiveRecord::Base
   private
   
     def store_user_names_as_game_profile_names
-      if self.user.present?
-        puts "USER IS HERE"
-      end
-      
-      
       if self.first_name.nil? and self.user.present?
         self.first_name = self.user.first_name
       end
@@ -45,13 +38,11 @@ class GameProfile < ActiveRecord::Base
       if self.last_name.nil? and self.user.present?
         self.last_name = self.user.last_name
       end
+      
+      format_names_nicely
     end
     
     def store_user_mobile_as_game_profile_mobile
-      if self.user.present?
-        puts "USER IS HERE"
-      end
-      
       if self.mobile.nil? and self.user.present?
         self.mobile = self.user.mobile
       end

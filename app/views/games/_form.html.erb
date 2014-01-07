@@ -27,9 +27,8 @@
 
   <div id="preregistration-box" class="field slidedown-box">
     <div id="player-input-box">
-      If you know your players' cell phone numbers and want to enable in-game
-      updates (e.g. message all players when the game starts, let players report
-      kills via sms, etc.), enter each player's phone number after his or her
+      If you know your players' cell phone numbers and want to allow them to
+      report kills via sms, enter each player's phone number after his or her
       name, separated by a comma (e.g. John Smith, 212-555-1234)
       <br /><br />
       If you do not have all your players' cell phone numbers but want to enable
@@ -39,7 +38,10 @@
       <%= f.text_area :player_sheet %>
     </div>
     <br />
-    <%= render :partial => 'parameter_lists' %>
+    <%= render :partial => 'parameter_lists', :locals => {
+      num_params: @num_params,
+      default_param_values: @default_param_values
+    } %>
   </div>
   <div class="actions">
     <%= f.submit 'Submit' %>
@@ -48,6 +50,9 @@
 
 <script type="text/javascript" charset="utf-8">
   $(document).ready(function() {
+    <% if @game.preregistered? %>
+      $("#preregistration-box").css("display","block")
+    <% end %>
     $('#game_preregistered_false').on('change',function() {
       $("#preregistration-box").slideUp("3000")
     })

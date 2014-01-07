@@ -23,5 +23,7 @@ module EliminationCircle
     config.action_view.field_error_proc = Proc.new { |html_tag, instance| 
       "#{html_tag}".html_safe # Eliminate the field-with-errors divs.
     }
+    
+    config.autoload_paths += %W(#{config.root}/lib)
   end
 end

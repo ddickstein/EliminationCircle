@@ -1,7 +1,7 @@
 <%= form_for(@user) do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
-      <h3><%= pluralize(@user.errors.count, "error") %> prevented this user from being saved:</h3>
+      <h3><%= pluralize(@user.errors.count, "error") %> prevented you from signing up:</h3>
       <ul>
       <% @user.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>

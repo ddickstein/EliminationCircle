@@ -30,6 +30,14 @@ class GamesController < ApplicationController
           format.html { redirect_to @game, notice: 'Game was successfully created.' }
           format.json { render action: 'show', status: :created, location: @game }
         else
+          @num_params = params[:num_params]
+          @default_param_values = {}
+          1.upto(5) do |x|
+            @default_param_values[x] = {
+              name: params["param#{x}-name"],
+              value: params["param#{x}-list"]
+            }
+          end
           format.html { render action: 'new' }
           format.json { render json: @game.errors, status: :unprocessable_entity }
         end
@@ -98,7 +106,7 @@ class GamesController < ApplicationController
       @hunter.save
       
       respond_to do |format|
-        format.html { redirect_to @game, notice: "#{@player.name} was killed."}
+        format.html { redirect_to @game, notice: "#{@player.full_name} was killed."}
         format.json { render action: 'show', status: :killed, location: @game }
       end
     else

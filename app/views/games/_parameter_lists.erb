@@ -4,7 +4,11 @@
     take place.  For example, Killer uses a "Word" parameter for each player,
     and for players to be killed they must be tricked into saying this taboo
     word.<br />How many additional parameters will your game use?
-    <%= text_field_tag :num_params, '0' %>
+    <% if defined? num_params and num_params.present? %>
+      <%= text_field_tag :num_params, num_params %>
+    <% else %>
+      <%= text_field_tag :num_params, '0' %>
+    <% end %>
     <br />
     Still not sure what additional parameters are?
     <%= link_to 'Click here','#',:id => 'param-info' %> for more examples.
@@ -23,12 +27,20 @@
     <div id="param<%= x %>" class="param">
       <div class="field">
         Choose a name for the <%= wordinalize(x) %> parameter<br />
-        <%= text_field_tag "param#{x}-name" %>
+        <% if defined? default_param_values and default_param_values.present? %>
+          <%= text_field_tag "param#{x}-name", "#{default_param_values[x][:name]}" %>
+        <% else %>
+          <%= text_field_tag "param#{x}-name" %>
+        <% end %>
       </div>
       <div class="field">
         Enter all the possible values for the <%= wordinalize(x) %> parameter.
         <br />
-        <%= text_area_tag "param#{x}-list", nil, :class => 'parameter-list' %>
+        <% if defined? default_param_values and default_param_values.present? %>
+          <%= text_area_tag "param#{x}-list", "#{default_param_values[x][:value]}", :class => 'parameter-list' %>
+        <% else %>
+          <%= text_area_tag "param#{x}-list", nil, :class => 'parameter-list' %>
+        <% end %>
       </div>
     </div>
   <% end %>
@@ -40,6 +52,10 @@
     for (var i = 0; i < 5; i++)
     {
       arr[i] = "#param"+(i+1)
+      <% if defined? num_params and num_params.present? %>
+        if (i < <%= num_params.to_i %>)
+          $(arr[i]).css("display","block")
+      <% end %>
     }
     
     var refreshParamDivs = function(numParams) {
