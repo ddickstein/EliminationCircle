@@ -8,6 +8,11 @@ group :test, :development do
   gem 'sqlite3'
   gem 'hirb'
   gem 'rspec-rails', '~> 3.0.0.beta'
+  gem 'autotest-rails'
+  gem 'rspec-autotest'
+  gem 'ZenTest'
+  gem 'autotest-growl'
+  gem 'autotest-fsevent'
 end
 
 group :test do

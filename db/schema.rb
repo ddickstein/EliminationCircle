@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140107023410) do
+ActiveRecord::Schema.define(version: 20140106050729) do
 
   create_table "game_profiles", force: true do |t|
     t.string   "details"
@@ -41,7 +41,6 @@ ActiveRecord::Schema.define(version: 20140107023410) do
     t.string   "parameters"
     t.boolean  "started",       default: false
     t.boolean  "preregistered", default: false
-    t.boolean  "initialized",   default: false
   end
 
   add_index "games", ["permalink"], name: "index_games_on_permalink", unique: true

@@ -23,10 +23,12 @@ class GamesController < ApplicationController
       @game.user = current_user
       if @game.preregistered?
         @game.parameters, @game.parameter_lists = get_game_parameters(params)
-        @game.started = true
+        saved = @game.start
+      else
+        saved = @game.save
       end
       respond_to do |format|
-        if @game.save
+        if saved
           format.html { redirect_to @game, notice: 'Game was successfully created.' }
           format.json { render action: 'show', status: :created, location: @game }
         else
@@ -146,9 +148,8 @@ class GamesController < ApplicationController
   def launch
     unless @game.started? or @game.players.count < 2
       @game.parameters, @game.parameter_lists = get_game_parameters(params)
-      @game.started = true
       respond_to do |format|
-        if @game.save
+        if @game.start
           format.html { redirect_to @game, notice: 'Game was successfully launched.' }
           format.json { render action: 'show', status: :created, location: @game }
         else

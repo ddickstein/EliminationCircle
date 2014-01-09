@@ -5,7 +5,7 @@ module MobileConcern
                 (?<num1>\d\d\d)\s*-?\s*(?<num2>\d\d\d\d)\z/x
   
   included do
-    validates :mobile, :format => { :with => PHONE_REGEX }
+    validates :mobile, :format => { :with => PHONE_REGEX }, :if => :mobile
     before_save :reformat_mobile_number
   end
   

@@ -14,11 +14,10 @@ class Game < ActiveRecord::Base
   validates :user_id, :presence => true
   validates :preregistered, :inclusion => {:in => [true,false]}
   validates :player_sheet, :presence => true, :if => :preregistered?
-  validate  :has_valid_player_sheet, :if => :preregistered?
-  
+  validate  :has_valid_player_sheet
+
   before_create :generate_permalink
   after_create :create_players, :if => :preregistered?
-  after_commit :initialize_game, :unless => :initialized?
   
   def to_param
     self.permalink
@@ -33,16 +32,24 @@ class Game < ActiveRecord::Base
     end
   end
   
-  def pending?
-    started? and not initialized?
+  def start
+    return false if started? or not valid? or self.players.count < 2?
+    create_circle
+    distribute_parameters
+    self.started = true
+    self.save
   end
   
+  def pending?
+    not started?
+  end
+
   def progressing?
-    initialized? and self.players.where(is_alive: true).count > 1
+    started? and self.players.where(is_alive: true).count > 1
   end
 
   def finished?
-    initialized? and not progressing?
+    not pending? and not progressing?
   end
   
   def players
@@ -64,15 +71,17 @@ class Game < ActiveRecord::Base
     end
     
     def has_valid_player_sheet
-      rows = self.player_sheet.split("\n").map(&:strip)
-      rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
-      if rows.size < 2
-        self.errors[:base] << "Fewer than two players specified"
-      else
-        rows.each do |row|
-          if row !~ PLAYER_REGEX
-            self.errors[:base] << "Bad format on line \"#{row}\""
-            break
+      if self.player_sheet.present?
+        rows = self.player_sheet.split("\n").map(&:strip)
+        rows.keep_if {|row| row !~ /^\s*$/ } # Keep if not just whitespace
+        if rows.size < 2
+          self.errors[:base] << "Fewer than two players specified"
+        else
+          rows.each do |row|
+            if row !~ PLAYER_REGEX
+              self.errors[:base] << "Bad format on line \"#{row}\""
+              break
+            end
           end
         end
       end
@@ -90,15 +99,6 @@ class Game < ActiveRecord::Base
         player.last_name = name_arr[1..-1].join(" ")
         player.mobile = phone unless phone.nil?
         player.save!
-      end
-    end
-    
-    def initialize_game
-      if self.players.count >= 2 and pending?
-        create_circle
-        distribute_parameters
-        self.initialized = true
-        self.save
       end
     end
     

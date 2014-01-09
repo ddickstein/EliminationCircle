@@ -12,7 +12,7 @@ module Shuffler
     end
     if (shuffled_arr.length < length)
       missing_length = length - shuffled_arr.length
-      shuffled_arr += arr.shuffle[0...missing_length]
+      shuffled_arr += arr.sample(missing_length)
     end
     shuffled_arr
   end

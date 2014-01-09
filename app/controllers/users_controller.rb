@@ -32,7 +32,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-    @title = "Edit Profile"
+    @title = "Edit info"
   end
 
   # POST /users

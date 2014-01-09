@@ -13,7 +13,6 @@
         - name
         - user_id
         - status
-        - initialized?
         - parameters
         - permalink
         - preregistered?
