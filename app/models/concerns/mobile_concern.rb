@@ -11,11 +11,13 @@ module MobileConcern
   
   private
     def reformat_mobile_number
-      area, num1, num2 = PHONE_REGEX.match(self.mobile).to_a[1..3]
-      if area =~ /\([2-9]\d\d\)/
-        self.mobile = "1 #{area} #{num1} - #{num2}"
-      else
-        self.mobile = "1 (#{area}) #{num1} - #{num2}"
+      if self.mobile.present?
+        area, num1, num2 = PHONE_REGEX.match(self.mobile).to_a[1..3]
+        if area =~ /\([2-9]\d\d\)/
+          self.mobile = "1 #{area} #{num1} - #{num2}"
+        else
+          self.mobile = "1 (#{area}) #{num1} - #{num2}"
+        end
       end
     end
   

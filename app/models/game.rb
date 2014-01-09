@@ -22,22 +22,23 @@ class Game < ActiveRecord::Base
   def to_param
     self.permalink
   end
-  
+
   def status
     case
-    when self.pending? then 'pending'
-    when self.progressing? then 'in progress'
-    when self.finished? then 'finished'
+    when pending? then 'pending'
+    when progressing? then 'in progress'
+    when finished? then 'finished'
     else nil
     end
   end
   
   def start
-    return false if started? or not valid? or self.players.count < 2?
+    save if new_record?
+    return false if started? or not valid? or players.count < 2
     create_circle
     distribute_parameters
     self.started = true
-    self.save
+    save
   end
   
   def pending?
@@ -105,7 +106,7 @@ class Game < ActiveRecord::Base
     def create_circle
       first_player = nil
       most_recent_player = nil
-      self.players.shuffle.each do |player|
+      players.shuffle.each do |player|
         if first_player.nil?
           first_player = player
           most_recent_player = player
@@ -121,11 +122,11 @@ class Game < ActiveRecord::Base
     
     def distribute_parameters
       if self.parameter_lists.present?
-        num_players = self.players.count
+        num_players = players.count
         detail_sets = self.parameter_lists.map { |name,list|
           Shuffler.shuffle_to_length(list,num_players)
         }.transpose.map{|set| set.join(", ")}
-        self.players.each_with_index do |player,index|
+        players.each_with_index do |player,index|
           player.details = detail_sets[index]
           player.save!
         end

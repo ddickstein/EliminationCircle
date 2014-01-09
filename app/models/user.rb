@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   validates :name, :presence => true, :format => { :with => NAME_REGEX }
   validates :email, :presence => true, :format => { :with => EMAIL_REGEX },
                     :uniqueness => { case_sensitive: false }
-  validates :mobile, :uniqueness => true
+  validates :mobile, :uniqueness => true, :if => :mobile
   validates :password, :presence => true, :length => { minimum: 6 },
                        :confirmation => true, :on => :create
   validates :password, :presence =>true, :length => { minimum: 6 },
